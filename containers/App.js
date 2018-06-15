@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
+import Matchup from './Matchup'
 
 export default class App extends Component {
     render () {
-        return <p>This is The Game View Rendered By React</p>
+    	return(
+    		<Matchup />
+    	)
     }
 }
