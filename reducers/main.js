@@ -8,12 +8,9 @@ const initState = {
 const schedule = (state = { proGames: [] }, action) => {
 	switch (action.type) {
 		case SAVE_SCHEDULE:
-			// just nuke the whole schedule item and save what we have now, for now
-			return action.proGames.progames
-/*			return Object.assign(state, {}, {
-				action.proGames
+			return Object.assign({}, state, {
+				proGames: action.games,
 			})
-*/
 		default:
 			return state
 	}
