@@ -9,13 +9,20 @@ import { fetchGame } from '../actions/main'
 class Matchup extends Component {
 	render() {
 		const game = this.props.game
+		console.log('the game though:', game)
+		const awayTeam = game && game.competitors ? game.competitors[1] : null
+		const homeTeam = game && game.competitors ? game.competitors[0] : null
 		return (
 			<div>
-				<p>Matchup View</p>
-				<Pitcher />
-				<Batters />
-				<Pitcher />
-				<Batters />
+				<p>
+					{ awayTeam && awayTeam.team.abbreviation } 
+					@ 
+					{ homeTeam && homeTeam.team.abbreviation }
+				</p>
+				<Pitcher team={awayTeam} />
+				<Batters team={homeTeam} />
+				<Pitcher team={homeTeam} />
+				<Batters team={awayTeam} />
 			</div> //
 		)
 	}

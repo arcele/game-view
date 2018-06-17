@@ -26,7 +26,7 @@ export const fetchSchedule = () => {
 
 export const fetchGame = (id) => {
 	return dispatch => {
-		fetch('http://site.api.espn.com/apis/site/v2/sports/baseball/leagues/mlb/gameheader?event=380617101&lang=en&contentOrigin=espn').then((res) => {
+		fetch(`http://site.api.espn.com/apis/site/v2/sports/baseball/leagues/mlb/gameheader?event=${id}&lang=en&contentOrigin=espn`).then((res) => {
 			return res.json()
 		}).then((resJson) => {
 			dispatch({type: SAVE_GAME, game: resJson})
