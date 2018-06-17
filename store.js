@@ -1,10 +1,10 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import mainReducer from './reducers/main'
+import gameView from './reducers/main'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
 const reducer = combineReducers({
-	mainReducer
+	gameView
 })
 
 const middleware = [

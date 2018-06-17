@@ -1,17 +1,27 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { fetchSchedule } from '../actions/main'
+import PropTypes from 'prop-types'
 
-class Matchup extends Component {
+class Schedule extends Component {
 	render() {
 		return (
 			<div>
 				<p>Schedule View</p>
-			</div> //
+			</div> 
 		)
 	}
 
 	componentDidMount() {
-		console.log('fetch the schedule data.')
+		this.props.dispatch(fetchSchedule())
 	}
 }
 
-export default Matchup
+Schedule.propTypes = { dispatch: PropTypes.func.isRequired }
+
+
+const mapStateToProps = (state) => {
+	return state.gameView.schedule
+}
+
+export default connect(mapStateToProps)(Schedule)

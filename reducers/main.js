@@ -1,16 +1,26 @@
-import { FETCH_PLAYER, STORE_PLAYER } from '../types/main'
+import { SAVE_SCHEDULE } from '../types/main'
+import { combineReducers } from 'redux'
 
 const initState = {
-
+	proGames: []
 }
 
-export default (state = initState, action) => {
-	switch(action.type) {
-		case STORE_PLAYER:
-			return Object.assign(state, {}, {
-				player: action.player
-		})
+const schedule = (state = { proGames: [] }, action) => {
+	switch (action.type) {
+		case SAVE_SCHEDULE:
+			// just nuke the whole schedule item and save what we have now, for now
+			return action.proGames.progames
+/*			return Object.assign(state, {}, {
+				action.proGames
+			})
+*/
 		default:
 			return state
 	}
 }
+
+const reducer = combineReducers({
+	schedule,
+})
+
+export default reducer
