@@ -9,7 +9,7 @@ class App extends Component {
 		return(
 			<div id="matchup-frame">
 				<Route exact path="/" component={Schedule}/>
-				<Route exact path="/:id" component={Matchup} />
+				<Route exact path="/game/:id" component={Matchup} />
 			</div>//
 		)
 	}
