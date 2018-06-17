@@ -2,14 +2,21 @@ import React, {Component} from 'react';
 import Matchup from './Matchup'
 import Schedule from './Schedule'
 import { Route } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export default class App extends Component {
-    render () {
-    	return(
-    		<div id="matchup-frame">
-    			<Route exact path="/" component={Schedule} />
-	    		<Route exact path="/:id" component={Matchup} />
-	    	</div>
-    	)
-    }
+class App extends Component {
+	render () {
+		return(
+			<div id="matchup-frame">
+				<Route exact path="/" component={Schedule}/>
+				<Route exact path="/:id" component={Matchup} />
+			</div>//
+		)
+	}
+
+	componentDidMount() {
+
+	}
 }
+
+export default App
