@@ -19,9 +19,9 @@ const schedule = (state = { proGames: [] }, action) => {
 const game = (state = { }, action) => {
 	switch (action.type) {
 		case SAVE_GAME:
-			return Object.assign({}, state, {
-				game: action.game
-			})
+			return Object.assign({}, state, 
+				action.game.events.competitions[0]
+			)
 		default:
 			return state
 	}

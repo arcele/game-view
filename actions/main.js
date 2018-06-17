@@ -24,18 +24,12 @@ export const fetchSchedule = () => {
 	}
 }
 
-export const fetchGame = (id, stateGames) => {
+export const fetchGame = (id) => {
 	return dispatch => {
-		// check if we have it on the state
-		if(stateGames && stateGames.length) {
-			stateGames.map((game) => {
-				if(game.gameId == id) { // thing from match is a string so, no ===
-					dispatch({type: SAVE_GAME, game })
-				}
-			})
-		} else {
-			// we gotta grab all the stuff for this game
-			console.log('omg, A FULL FETCH CRAAAAAZY')
-		}
+		fetch('http://site.api.espn.com/apis/site/v2/sports/baseball/leagues/mlb/gameheader?event=380617101&lang=en&contentOrigin=espn').then((res) => {
+			return res.json()
+		}).then((resJson) => {
+			dispatch({type: SAVE_GAME, game: resJson})
+		})
 	}
 }

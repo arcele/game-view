@@ -8,6 +8,7 @@ import { fetchGame } from '../actions/main'
 
 class Matchup extends Component {
 	render() {
+		const game = this.props.game
 		return (
 			<div>
 				<p>Matchup View</p>
@@ -20,19 +21,18 @@ class Matchup extends Component {
 	}
 
 	componentDidMount() {
-		console.log('fetch the matchup data to feed to other components.', this.props)
-		this.props.dispatch(fetchGame(this.props.match.params.id, this.props.schedule.proGames))
+		this.props.dispatch(fetchGame(this.props.match.params.id))
 	}
 }
 
 Matchup.propTypes = { 
 	dispatch: PropTypes.func.isRequired,
-	schedule: PropTypes.object.isRequired,
+	game: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = (state) => {
 	return {
-		schedule: state.gameView.schedule,
+		game: state.gameView.game,
 	}
 }
 
