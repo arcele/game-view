@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME } from '../types/main'
 import { combineReducers } from 'redux'
 
 const initState = {
@@ -16,8 +16,20 @@ const schedule = (state = { proGames: [] }, action) => {
 	}
 }
 
+const game = (state = { }, action) => {
+	switch (action.type) {
+		case SAVE_GAME:
+			return Object.assign({}, state, {
+				game: action.game
+			})
+		default:
+			return state
+	}
+}
+
 const reducer = combineReducers({
 	schedule,
+	game,
 })
 
 export default reducer

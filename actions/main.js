@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME } from '../types/main'
 import fetch from 'isomorphic-fetch'
 
 
@@ -21,5 +21,21 @@ export const fetchSchedule = () => {
 		}).then((resJson) => {
 			dispatch({type: SAVE_SCHEDULE, games: resJson.progames.games })
 		})
+	}
+}
+
+export const fetchGame = (id, stateGames) => {
+	return dispatch => {
+		// check if we have it on the state
+		if(stateGames && stateGames.length) {
+			stateGames.map((game) => {
+				if(game.gameId == id) { // thing from match is a string so, no ===
+					dispatch({type: SAVE_GAME, game })
+				}
+			})
+		} else {
+			// we gotta grab all the stuff for this game
+			console.log('omg, A FULL FETCH CRAAAAAZY')
+		}
 	}
 }
