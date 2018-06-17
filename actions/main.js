@@ -18,8 +18,8 @@ export const fetchSchedule = () => {
 	return dispatch => {
 		fetch('http://games.espn.com/flb/api/v2/proGames?scoringPeriodId=81').then((response) => {
 			return response.json()
-		}).then((proGames) => {
-			dispatch({type: SAVE_SCHEDULE, proGames})
+		}).then((resJson) => {
+			dispatch({type: SAVE_SCHEDULE, games: resJson.progames.games })
 		})
 	}
 }
