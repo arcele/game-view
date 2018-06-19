@@ -18,13 +18,13 @@ class Schedule extends Component {
 				}
 				<ul>
 				{ games.map((game) => {
-					let gameDate = new Date(game.gameDate)
+					let gameDate = new Date(game['game_time_local'])
 					return (
 						<li key={game.gameId}>
 							<Link to={`/game/${game.gameId}`}>
-							{game.awayProTeamId} 
+							{game['away_team_abbrev']} 
 							@ 
-							{game.homeProTeamId} 
+							{game['home_team_abbrev']} 
 							-- 
 							{game.gameId}
 							({gameDate.toLocaleTimeString()})
