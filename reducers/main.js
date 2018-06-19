@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, SAVE_GAME } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS } from '../types/main'
 import { combineReducers } from 'redux'
 
 const initState = {
@@ -21,6 +21,12 @@ const game = (state = { }, action) => {
 		case SAVE_GAME:
 			return Object.assign({}, state, 
 				action.game.events.competitions[0]
+			)
+		case SAVE_PROBABLE_STARTERS:
+			return Object.assign({}, state,
+				{
+					starters: action.starters,
+				}
 			)
 		default:
 			return state
