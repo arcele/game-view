@@ -20,8 +20,8 @@ class Schedule extends Component {
 				{ games.map((game) => {
 					let gameDate = new Date(game['game_time_local'])
 					return (
-						<li key={game.gameId}>
-							<Link to={`/game/${game.gameId}`}>
+						<li key={game['game_pk']}>
+							<Link to={`/game/${game['game_pk']}`}>
 							{game['away_team_abbrev']} 
 							@ 
 							{game['home_team_abbrev']} 
