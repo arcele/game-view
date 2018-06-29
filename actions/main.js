@@ -13,16 +13,26 @@ export const savePlayer = (player) => {
   }
 }
 
-export const fetchSchedule = () => {
-	const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
-	const gameYear = new Date().getFullYear()
-	const scheduleApi = `http://lookup-service-prod.mlb.com/json/named.mlb_broadcast_info.bam?src_type='TV'&tcid=mm_mlb_schedule&sort_by='game_time_et_asc'&home_away='H'&start_date='${gameDate}'&end_date='${gameDate}'&season='${gameYear}'`
-	return dispatch => {
+export const makeScheduleCall = (gameDate, season, dispatch) => {
+	// make schedule call, return a promise that resolves with the contents of the schedule
+	const scheduleApi = `http://lookup-service-prod.mlb.com/json/named.mlb_broadcast_info.bam?src_type='TV'&tcid=mm_mlb_schedule&sort_by='game_time_et_asc'&home_away='H'&start_date='${gameDate}'&end_date='${gameDate}'&season='${season}'`
+	return new Promise((resolve) => {
 		fetch(scheduleApi).then((response) => {
 			return response.json()
 		}).then((resJson) => {
-			dispatch({type: SAVE_SCHEDULE, games: resJson['mlb_broadcast_info']['queryResults']['row'] })
+			if(dispatch) {
+				dispatch({type: SAVE_SCHEDULE, games: resJson['mlb_broadcast_info']['queryResults']['row'] })
+			}
+			resolve(resJson)
 		})
+	})
+}
+
+export const fetchSchedule = () => {
+	const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
+	const gameYear = new Date().getFullYear()
+	return dispatch => {
+		makeScheduleCall(gameDate, gameYear, dispatch)
 	}
 }
 

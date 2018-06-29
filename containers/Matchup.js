@@ -3,13 +3,13 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Pitcher from '../components/Pitcher'
 import Batters from '../components/Batters'
-import { fetchGame } from '../actions/main'
+import { fetchGame, fetchSchedule, makeScheduleCall } from '../actions/main'
 import { LOAD_GAME } from '../types/main'
 
 
 class Matchup extends Component {
 	render() {
-		const game = this.props.game
+		const game = this.props.schedule.game
 		console.log('the game though:', game)
 		const awayTeam = game && game.competitors ? game.competitors[1] : null
 		const homeTeam = game && game.competitors ? game.competitors[0] : null
@@ -63,19 +63,33 @@ class Matchup extends Component {
 	}
 
 	componentDidMount() {
-		this.props.dispatch({ type: LOAD_GAME, gameId: this.props.match.params.id })
-		this.props.dispatch(fetchGame(this.props.match.params.id))
+		// make sure we have the schedule
+		const { dispatch, match, schedule } = this.props
+		new Promise((resolve) => {
+			if(schedule && schedule.proGames.length > 0) {
+				// We have the proGames on the state, continue on
+				resolve()
+			} else {
+				// fetch the proGames, resolve once we've got 'em'
+				const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
+				const gameYear = new Date().getFullYear()
+				makeScheduleCall(gameDate, gameYear, dispatch).then(() => resolve())
+			}
+		}).then(() => {
+			dispatch({ type: LOAD_GAME, gameId: match.params.id })
+			dispatch(fetchGame(match.params.id))
+		})
 	}
 }
 
 Matchup.propTypes = { 
 	dispatch: PropTypes.func.isRequired,
-	game: PropTypes.object.isRequired,
+	schedule: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => {
 	return {
-		game: state.gameView.game,
+		schedule: state.gameView.schedule,
 	}
 }
 
