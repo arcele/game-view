@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE } from '../types/main'
 import fetch from 'isomorphic-fetch'
 
 
@@ -32,6 +32,7 @@ export const fetchSchedule = () => {
 	const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
 	const gameYear = new Date().getFullYear()
 	return dispatch => {
+		dispatch({type: REQUEST_SCHEDULE})
 		makeScheduleCall(gameDate, gameYear, dispatch)
 	}
 }

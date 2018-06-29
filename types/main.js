@@ -1,3 +1,4 @@
+export const REQUEST_SCHEDULE = "REQUEST_SCHEDULE"
 export const SAVE_SCHEDULE = "SAVE_SCHEDULE"
 
 export const LOAD_GAME = "LOAD_GAME"

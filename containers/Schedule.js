@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom'
 
 class Schedule extends Component {
 	componentDidMount() {
-		this.props.dispatch(fetchSchedule())
+		if(!this.props.schedule.requestedGames) {
+			// We haven't fetched the schedule yet, so, like, do it.
+			this.props.dispatch(fetchSchedule())
+		}
 	}
 	render() {
 		const games = this.props.schedule.proGames.map((proGame) => {
