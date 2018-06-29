@@ -9,7 +9,10 @@ class Schedule extends Component {
 		this.props.dispatch(fetchSchedule())
 	}
 	render() {
-		const games = this.props.schedule.proGames
+		const games = this.props.schedule.proGames.map((proGame) => {
+			// check for dupes
+			return proGame
+		})
 		return (
 			<div>
 				<p>Schedule View</p>			

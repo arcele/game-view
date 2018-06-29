@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import Pitcher from '../components/Pitcher'
 import Batters from '../components/Batters'
 import { fetchGame } from '../actions/main'
+import { LOAD_GAME } from '../types/main'
 
 
 class Matchup extends Component {
@@ -17,7 +18,7 @@ class Matchup extends Component {
 				
 						
 					<div className="team away" style={ { float:"left", width:"50%" } }>	
-						{ awayTeam && awayTeam.team.abbreviation }
+						{ awayTeam && awayTeam.abbreviation }
 						<div style={
 							{
 								float:"left",
@@ -62,6 +63,7 @@ class Matchup extends Component {
 	}
 
 	componentDidMount() {
+		this.props.dispatch({ type: LOAD_GAME, gameId: this.props.match.params.id })
 		this.props.dispatch(fetchGame(this.props.match.params.id))
 	}
 }
