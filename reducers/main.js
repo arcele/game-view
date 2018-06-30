@@ -28,10 +28,21 @@ const schedule = (state = {
 				requestedGames: true
 			})
 		case SAVE_SCHEDULE:
-			// Save the daily schedule once it's been fetched
-			// we should kill the dupes in here
+			// Remove dupes from and save the daily schedule once it's been fetched
+			let proGames = action.games.filter((g) => {
+				if(action.games.filter((h) => { return h.game_pk == g.game_pk }).length === 1) {
+					// unique game, we cool
+					return g
+				} else { 
+					let firstMatch = action.games.find((h) => { return h.game_pk == g.game_pk })
+					if(firstMatch.source_id === g.source_id) {
+						// there's multiple, but, it's the first occurence
+						return g
+					}
+				}
+			})
 			return Object.assign({}, state, {
-				proGames: action.games,
+				proGames
 			})
 		case LOAD_GAME:
 			// Pulls a game from the proGames, hope you've got proGames.
@@ -44,7 +55,7 @@ const schedule = (state = {
 			})
 		case SAVE_PROBABLE_STARTERS:
 			// Save the probable starters to the original game element
-			const proGames = state.proGames.slice(0)
+			proGames = state.proGames.slice(0)
 			let game = getGame(action.gameId)
 			game.starters = action.starters
 			return Object.assign({}, state, {
