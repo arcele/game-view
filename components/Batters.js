@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 
 class Batters extends Component {
 	render() {
-		console.log('batters props:', this.props)
 		const players = this.props.players || []
-		console.log('players tho:', players)
 		return (
 			<div>
 				<p>Batters Component</p>

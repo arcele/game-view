@@ -29,6 +29,7 @@ const schedule = (state = {
 			})
 		case SAVE_SCHEDULE:
 			// Save the daily schedule once it's been fetched
+			// we should kill the dupes in here
 			return Object.assign({}, state, {
 				proGames: action.games,
 			})
@@ -37,8 +38,8 @@ const schedule = (state = {
 			const gameId = action.gameId
 			return Object.assign({}, state, {
 				// This creates a reference to the game, which is rad for reading,
-				// but, you have to write any changes to the og game in proGames or, wtf
-				// was any of this even for?!??!?!?!??! :creed: :scuba:
+				// grab the game using the getGame utility function and save it here
+				// to update the actual proGame
 				game: getGame(gameId)
 			})
 		case SAVE_PROBABLE_STARTERS:
@@ -47,17 +48,16 @@ const schedule = (state = {
 			let game = getGame(action.gameId)
 			game.starters = action.starters
 			return Object.assign({}, state, {
-				proGames
+				game
 			})
 		case SAVE_BVP_DATA:
 			// Save the BVP data to the state
 			game = getCurrentGame()
-			console.log('saving for game, okay? :', game)
 			if(game.starters && game.starters.home === action.pitcher) {
-				game.starters['home_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
+				game['home_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
 			}
 			if(game.starters && game.starters.away === action.pitcher) {
-				game.starters['away_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
+				game['away_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
 			}
 			return Object.assign({}, state, {
 				game
@@ -67,7 +67,7 @@ const schedule = (state = {
 	}
 }
 
-const game = (state = { }, action) => {
+const unused = (state = { }, action) => {
 	switch (action.type) {		default:
 			return state
 	}
@@ -75,7 +75,7 @@ const game = (state = { }, action) => {
 
 const reducer = combineReducers({
 	schedule,
-	game,
+	unused,
 })
 // to do move this off of multiple reducers, it's dumb  game reducer is hot fat garbage
 export default reducer
