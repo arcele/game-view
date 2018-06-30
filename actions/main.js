@@ -39,24 +39,27 @@ export const fetchSchedule = () => {
 
 export const fetchGame = (game) => {
 	return dispatch => {
-		const id = game['game_pk']
-		const probableApi = `https://statsapi.mlb.com/api/v1/schedule?gamePk=${id}&language=en&hydrate=lineups,broadcasts(all),probablePitcher(note),game(tickets)&useLatestGames=true&fields=dates,games,teams,probablePitcher,note,id,dates,games,broadcasts,type,name,homeAway,isNational,dates,games,game,tickets,ticketType,ticketLinks,dates,games,lineups,homePlayers,awayPlayers,useName,lastName,primaryPosition,abbreviation`
+		const id = game['game_pk']		
+		const probableApi = `https://statsapi.mlb.com/api/v1.1/game/530652/feed/live?language=en&timecode=${id}`
 		fetch(probableApi).then((res) => {
 			return res.json()
 		}).then((probableData) => {
-			const away = probableData.dates[0].games[0].teams.away.probablePitcher.id
-			const home = probableData.dates[0].games[0].teams.home.probablePitcher.id
-			dispatch({type: SAVE_PROBABLE_STARTERS, gameId: id, starters: {away, home}})
-			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${home}&game_type=%27R%27&team_id=${game['away_team_id']}&year=2018`
-			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${away}&game_type=%27R%27&team_id=${game['home_team_id']}&year=2018`
+			const starters = probableData.gameData.probablePitchers
+			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, starters })
+			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${game['away_team_id']}&year=2018`
+			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${game['home_team_id']}&year=2018`
 			fetch(homePitcherApi).then((res) => {
 				return res.json()
 			}).then((homeData) => {
-				dispatch({type: SAVE_BVP_DATA, pitcher: home, data: homeData})
+				dispatch({type: SAVE_BVP_DATA, pitcher: starters.home.id, data: homeData})
 				fetch(awayPitcherApi).then((awayRes) => {
 					return awayRes.json()
 				}).then((awayData) => {
-					dispatch({type: SAVE_BVP_DATA, pitcher: away, data: awayData})
+					dispatch({type: SAVE_BVP_DATA, pitcher: starters.away.id, data: awayData})
+					// now we've got the bvp data, and teh probables, we can fetch the pitcher data, first we need to get the espn playerIds, because we want espn stuff for this like game log
+					// playerinfo api: http://games.espn.com/flb/api/v2/playerInfo?playerId=4352&useCurrentSeasonRealStats=true&useCurrentSeasonProjectedStats=true&usePreviousSeasonRealStats=false&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=true&includeProjectionText=true&useGameLog=true&maxGames=15&include=gamesLog|news|projections|playerInfos&rand=564419080541
+					// player search api: http://games.espn.com/flb/format/playerSuggestJSON?leagueId=7566&teamId=7&search=velas&r=3995616
+					const playerSearchApi = `http://games.espn.com/flb/format/playerSuggestJSON?search=${id}`
 				})
 			})
 		})

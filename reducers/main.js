@@ -64,10 +64,10 @@ const schedule = (state = {
 		case SAVE_BVP_DATA:
 			// Save the BVP data to the state
 			game = getCurrentGame()
-			if(game.starters && game.starters.home === action.pitcher) {
+			if(game.starters && game.starters.home.id === action.pitcher) {
 				game['home_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
 			}
-			if(game.starters && game.starters.away === action.pitcher) {
+			if(game.starters && game.starters.away.id === action.pitcher) {
 				game['away_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
 			}
 			return Object.assign({}, state, {
