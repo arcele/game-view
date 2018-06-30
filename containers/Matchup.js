@@ -43,9 +43,9 @@ class Matchup extends Component {
 				{ game && game['home_team_abbrev'] }
 				</div>
 				<Pitcher team={game && game['away_team_abbrev']} />
-				<Batters players={game && game['away_pitcher_bvp']} />
+				<Batters team={game && game['home_team_short']} players={game && game['away_pitcher_bvp']} />
 				<Pitcher team={game && game['home_team_abbrev']} />
-				<Batters players={game && game['home_pitcher_bvp']} />
+				<Batters team={game && game['away_team_short']} players={game && game['home_pitcher_bvp']} />
 			</div>
 		)
 	}

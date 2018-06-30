@@ -5,11 +5,10 @@ class Batters extends Component {
 		const players = this.props.players || []
 		return (
 			<div>
-				<p>Batters Component</p>
 				<table>
 					<thead>
 						<tr>
-							<td>&nbsp;</td>
+							<td>{this.props.team} Batters</td>
 							<td>H/AB</td>
 							<td>AVG</td>
 							<td>HR</td>
