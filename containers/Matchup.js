@@ -9,28 +9,6 @@ import { Link } from 'react-router-dom'
 
 
 class Matchup extends Component {
-	render() {
-		const game = this.props.schedule.game
-		console.log('the game though:', game)
-		return (
-
-			<div>
-				<p>Matchup View</p>
-				<p><Link to={`/`}>Schedule</Link></p>
-				<div className="team away" style={ { float:"left", width:"50%" } }>	
-				{ game && game['away_team_abbrev'] }
-				</div>
-				
-				<div className="team home" style={ { float:"left", width:"50%" } }>	
-				{ game && game['home_team_abbrev'] }
-				</div>
-				<Pitcher team={game && game['away_team_abbrev']} />
-				<Batters team={game && game['home_team_abbrev']} />
-				<Pitcher team={game && game['home_team_abbrev']} />
-				<Batters team={game && game['away_team_abbrev']} />
-			</div> //
-		)
-	}
 
 	componentDidMount() {
 		// make sure we have the schedule
@@ -47,9 +25,29 @@ class Matchup extends Component {
 			}
 		}).then(() => {
 			dispatch({ type: LOAD_GAME, gameId: match.params.id })
-			dispatch(fetchGame(match.params.id))
+			dispatch(fetchGame(this.props.schedule.game))
 		})
-		console.log('oh, hai props:', this.props)
+	}
+
+	render() {
+		const game = this.props.schedule.game
+		return (
+			<div>
+				<p>Matchup View</p>
+				<p><Link to={`/`}>Schedule</Link></p>
+				<div className="team away" style={ { float:"left", width:"50%" } }>	
+				{ game && game['away_team_abbrev'] }
+				</div>
+				
+				<div className="team home" style={ { float:"left", width:"50%" } }>	
+				{ game && game['home_team_abbrev'] }
+				</div>
+				<Pitcher team={game && game['away_team_abbrev']} />
+				<Batters players={game && game.starters && game.starters['away_pitcher_bvp']} />
+				<Pitcher team={game && game['home_team_abbrev']} />
+				<Batters players={game && game.starters && game.starters['home_pitcher_bvp']} />
+			</div>
+		)
 	}
 }
 
