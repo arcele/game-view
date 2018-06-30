@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS } from '../types/main'
 import fetch from 'isomorphic-fetch'
 
 
@@ -57,9 +57,29 @@ export const fetchGame = (game) => {
 				}).then((awayData) => {
 					dispatch({type: SAVE_BVP_DATA, pitcher: starters.away.id, data: awayData})
 					// now we've got the bvp data, and teh probables, we can fetch the pitcher data, first we need to get the espn playerIds, because we want espn stuff for this like game log
-					// playerinfo api: http://games.espn.com/flb/api/v2/playerInfo?playerId=4352&useCurrentSeasonRealStats=true&useCurrentSeasonProjectedStats=true&usePreviousSeasonRealStats=false&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=true&includeProjectionText=true&useGameLog=true&maxGames=15&include=gamesLog|news|projections|playerInfos&rand=564419080541
-					// player search api: http://games.espn.com/flb/format/playerSuggestJSON?leagueId=7566&teamId=7&search=velas&r=3995616
-					const playerSearchApi = `http://games.espn.com/flb/format/playerSuggestJSON?search=${id}`
+					const homeStarterName = starters.home.fullName
+					const homeStarterLastName = homeStarterName.split(',')[0]
+					const homeStarterFirstName = homeStarterName.split(' ')[homeStarterName.split(' ').length-1]
+					const playerSearchApi = `http://games.espn.com/flb/api/v2/playerInfo?availabilityFilter=all&lastNameFilter=${homeStarterLastName}&useCurrentSeasonRealStats=true&useCurrentSeasonProjectedStats=false&usePreviousSeasonRealStats=false&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=false&includeTopStatCategories=false&includeLatestNews=true&offset=0&limit=100&top3=false&useTxScoringPeriod=true&processAverages=false&rand=${Math.round(Math.random() * 100000)}`
+					fetch(playerSearchApi).then((playerSearchResult) => {
+						return playerSearchResult.json()
+					}).then((playerSearchData) => {
+						console.log('we need to find my player id from here:', playerSearchData)
+						return new Promise((resolve) => {
+							playerSearchData.playerInfo.players.map((player) => {
+								// this will break if there's two guys with the same name ¯\_(ツ)_/¯
+								if(player.player.firstName === homeStarterLastName) {
+									resolve(player)
+								}
+							})
+							// we couldn't match a player, I guess it's the first guy?
+							resolve(playerSearchData.playerInfo.players[0])
+						}).then((homeStarter) => {
+							// we should still get the gameLog, but, this is a nice start
+							dispatch( {type: SAVE_PITCHER_DETAILS, pitcher: starters.home.id, data: homeStarter })
+						})
+						
+					})
 				})
 			})
 		})

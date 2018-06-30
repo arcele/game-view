@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA } from '../types/main'
+import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA } from '../types/main'
 import { combineReducers } from 'redux'
 
 const initState = {
@@ -18,8 +18,10 @@ const schedule = (state = {
 
 	// Return the currently loaded game
 	const getCurrentGame = () => (
-		getGame(state.game['game_pk'])
+		state.game ? getGame(state.game['game_pk']) : {}
 	)
+
+	const game = getCurrentGame() // use this to save stuff to the state
 
 	switch (action.type) {
 		case REQUEST_SCHEDULE:
@@ -46,24 +48,31 @@ const schedule = (state = {
 			})
 		case LOAD_GAME:
 			// Pulls a game from the proGames, hope you've got proGames.
-			const gameId = action.gameId
 			return Object.assign({}, state, {
 				// This creates a reference to the game, which is rad for reading,
 				// grab the game using the getGame utility function and save it here
 				// to update the actual proGame
-				game: getGame(gameId)
+				game: getGame(action.gameId)
 			})
 		case SAVE_PROBABLE_STARTERS:
 			// Save the probable starters to the original game element
-			proGames = state.proGames.slice(0)
-			let game = getGame(action.gameId)
 			game.starters = action.starters
 			return Object.assign({}, state, {
 				game
 			})
+		case SAVE_PITCHER_DETAILS:
+		
+			let starters = Object.assign({}, game.starters, {})
+			if(game.starters.home.id === action.pitcher) {
+				starters.home = Object.assign({}, game.starters.home, {
+					data: action.data
+				})
+			}
+			return Object.assign({}, state, {
+				starters
+			})
 		case SAVE_BVP_DATA:
 			// Save the BVP data to the state
-			game = getCurrentGame()
 			if(game.starters && game.starters.home.id === action.pitcher) {
 				game['home_pitcher_bvp'] = action.data.team_bvp_5y.queryResults.row
 			}
