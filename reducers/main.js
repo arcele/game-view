@@ -61,15 +61,21 @@ const schedule = (state = {
 				game
 			})
 		case SAVE_PITCHER_DETAILS:
-		
+			// Save details about the pitcher fetched from the espn api onto the starters object
 			let starters = Object.assign({}, game.starters, {})
 			if(game.starters.home.id === action.pitcher) {
 				starters.home = Object.assign({}, game.starters.home, {
 					data: action.data
 				})
 			}
+			if(game.starters.away.id === action.pitcher) {
+				starters.away = Object.assign({}, game.starters.away, {
+					data: action.data
+				})
+			}
+			game.starters = starters
 			return Object.assign({}, state, {
-				starters
+				game
 			})
 		case SAVE_BVP_DATA:
 			// Save the BVP data to the state
