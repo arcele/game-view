@@ -42,9 +42,9 @@ class Matchup extends Component {
 				<div className="team home" style={ { float:"left", width:"50%" } }>	
 				{ game && game['home_team_abbrev'] }
 				</div>
-				<Pitcher team={game && game['away_team_abbrev']} />
+				<Pitcher team={game && game['away_team_abbrev']} pitcher={game && game.starters && game.starters.away} />
 				<Batters team={game && game['home_team_short']} players={game && game['away_pitcher_bvp']} />
-				<Pitcher team={game && game['home_team_abbrev']} />
+				<Pitcher team={game && game['home_team_abbrev']} pitcher={game && game.starters && game.starters.home} />
 				<Batters team={game && game['away_team_short']} players={game && game['home_pitcher_bvp']} />
 			</div>
 		)

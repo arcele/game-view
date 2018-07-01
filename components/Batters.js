@@ -8,11 +8,11 @@ class Batters extends Component {
 				<table>
 					<thead>
 						<tr>
-							<td>{this.props.team} Batters</td>
-							<td>H/AB</td>
-							<td>AVG</td>
-							<td>HR</td>
-							<td>SLG</td>
+							<th>{this.props.team} Batters</th>
+							<th>H/AB</th>
+							<th>AVG</th>
+							<th>HR</th>
+							<th>SLG</th>
 						</tr>
 					</thead>
 					<tbody>
