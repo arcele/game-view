@@ -46,7 +46,6 @@ export const fetchStarterDetails = (starter, dispatch) => {
 		fetch(playerSearchApi).then((res) => {
 			return res.json()
 		}).then((playerSearchData) => {
-			console.log('we need to find my player id from here:', playerSearchData)
 			return new Promise((searchResolve) => {
 				playerSearchData.playerInfo.players.map((player) => {
 					// this will break if there's two guys with the same name ¯\_(ツ)_/¯
@@ -68,7 +67,7 @@ export const fetchStarterDetails = (starter, dispatch) => {
 export const fetchGame = (game) => {
 	return dispatch => {
 		const id = game['game_pk']
-		const probableApi = `https://statsapi.mlb.com/api/v1.1/game/530652/feed/live?language=en&timecode=${id}`
+		const probableApi = `https://statsapi.mlb.com/api/v1.1/game/${id}/feed/live?language=en&timecode=`
 		fetch(probableApi).then((res) => {
 			return res.json()
 		}).then((probableData) => {
@@ -85,10 +84,10 @@ export const fetchGame = (game) => {
 				}).then((awayData) => {
 					dispatch({type: SAVE_BVP_DATA, pitcher: starters.away.id, data: awayData})
 					// now we've got the bvp data, and teh probables, we can fetch the pitcher data, first we need to get the espn playerIds, because we want espn stuff for this like game log
-					fetchStarterDetails(starters.home, dispatch).then( (a) => {
-						console.log('homestarter:', a)
-						fetchStarterDetails(starters.away, dispatch).then( (b) => {
-							console.log('thats it', b)
+					fetchStarterDetails(starters.home, dispatch).then( (homeStarter) => {
+						fetchStarterDetails(starters.away, dispatch).then( (awayStarter) => {
+							// What else?!
+							console.log(`we've got all the game data we want for now`)
 						})
 					})
 				})
