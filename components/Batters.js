@@ -16,15 +16,18 @@ class Batters extends Component {
 						</tr>
 					</thead>
 					<tbody>
-					{ players.map((player) => 
-						player && player.b_tpa && (<tr>
-							<td>{player.name}</td>
-							<td>{player.b_total_hits} / { player.b_ab}</td>
-							<td>{player.b_batting_avg}</td>
-							<td>{player.b_home_run}</td>
-							<td>{player.b_slugging_avg}</td>
-						</tr>)
-					)}
+						{ players.length === 0 && (
+							<tr colSpan="5"><td>Loading</td></tr>
+						)}
+						{ players.map((player) => 
+							(<tr key={player.player_id}>
+								<td>{player.name}</td>
+								<td>{player.b_total_hits} / { player.b_ab}</td>
+								<td>{player.b_batting_avg}</td>
+								<td>{player.b_home_run}</td>
+								<td>{player.b_slugging_avg}</td>
+							</tr>)
+						)}
 					</tbody>
 				</table>
 			</div>

@@ -67,7 +67,7 @@ export const fetchStarterDetails = (starter, dispatch) => {
 
 export const fetchGame = (game) => {
 	return dispatch => {
-		const id = game['game_pk']		
+		const id = game['game_pk']
 		const probableApi = `https://statsapi.mlb.com/api/v1.1/game/530652/feed/live?language=en&timecode=${id}`
 		fetch(probableApi).then((res) => {
 			return res.json()
