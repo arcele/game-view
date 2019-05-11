@@ -7,6 +7,13 @@ import { fetchGame, fetchSchedule, makeScheduleCall } from '../actions/main'
 import { LOAD_GAME } from '../types/main'
 import { Link } from 'react-router-dom'
 
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
 
 class Matchup extends Component {
 
@@ -32,26 +39,40 @@ class Matchup extends Component {
 	render() {
 		const game = this.props.schedule.game
 		return (
-			<div>
-				<p>Matchup View</p>
-				<p><Link to={`/`}>Schedule</Link></p>
-				<div className="team away" style={ { float:"left", width:"50%" } }>	
-				{ game && game['away_team_abbrev'] }
-				</div>
-				
-				<div className="team home" style={ { float:"left", width:"50%" } }>	
-				{ game && game['home_team_abbrev'] }
-				</div>
-				<Pitcher team={game && game['away_team_abbrev']} pitcher={game && game.starters && game.starters.away} />
-				<Batters team={game && game['home_team_short']} players={game && game['away_pitcher_bvp']} />
-				<Pitcher team={game && game['home_team_abbrev']} pitcher={game && game.starters && game.starters.home} />
-				<Batters team={game && game['away_team_short']} players={game && game['home_pitcher_bvp']} />
-			</div>
+			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
+				<Link to={`/`}>Schedule</Link>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>{ game && game['away_team_full'] }</TableCell>
+							<TableCell>{ game && game['home_team_full'] }</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						<TableRow>
+							<TableCell>
+								<Pitcher team={game && game['away_team_abbrev']} pitcher={game && game.starters && game.starters.away} />
+							</TableCell>
+							<TableCell>
+								<Pitcher team={game && game['home_team_abbrev']} pitcher={game && game.starters && game.starters.home} />
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<Batters team={game && game['home_team_short']} players={game && game['away_pitcher_bvp']} />
+							</TableCell>
+							<TableCell>
+								<Batters team={game && game['away_team_short']} players={game && game['home_pitcher_bvp']} />
+							</TableCell>
+						</TableRow>
+					</TableBody>
+				</Table>
+			</Paper>
 		)
 	}
 }
 
-Matchup.propTypes = { 
+Matchup.propTypes = {
 	dispatch: PropTypes.func.isRequired,
 	schedule: PropTypes.object.isRequired,
 }

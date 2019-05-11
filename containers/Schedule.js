@@ -4,6 +4,13 @@ import { fetchSchedule } from '../actions/main'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
 class Schedule extends Component {
 	componentDidMount() {
 		if(!this.props.schedule.requestedGames) {
@@ -12,40 +19,55 @@ class Schedule extends Component {
 		}
 	}
 	render() {
+		// TODO: remove <Link>s, add clicks to entire rows
+
 		const games = this.props.schedule.proGames.map((proGame) => {
 			// check for dupes
 			return proGame
 		})
 		return (
-			<div>
-				<p>Schedule View</p>			
+			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
 				{ games.length === 0 &&
 					`Loading, or whatever.`
 				}
-				<ul>
-				{ games.map((game) => {
-					let gameDate = new Date(game['game_time_local'])
-					return (
-						<li key={game['game_pk']}>
-							<Link to={`/game/${game['game_pk']}`}>
-							{game['away_team_abbrev']} 
-							@ 
-							{game['home_team_abbrev']} 
-							-- 
-							{game.gameId}
-							({gameDate.toLocaleTimeString()})
-							</Link>
-						</li>
-					)
-				}
-				)}
-				</ul>
-			</div> 
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Away</TableCell>
+							<TableCell>Home</TableCell>
+							<TableCell>First Pitch</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+					{ games.map((game) => {
+							let gameDate = new Date(game['game_time_local'])
+							return (
+								<TableRow key={game['game_pk']}>
+									<TableCell>
+										<Link to={`/game/${game['game_pk']}`}>
+											{game['away_team_full']}
+										</Link>
+									</TableCell>
+									<TableCell>
+										<Link to={`/game/${game['game_pk']}`}>
+											{game['home_team_full']}
+										</Link>
+									</TableCell>
+									<TableCell>
+										{gameDate.toLocaleTimeString()}
+									</TableCell>
+								</TableRow>
+							)
+						} )
+					}
+				  </TableBody>
+				</Table>
+			</Paper>
 		)
 	}
 }
 //
-Schedule.propTypes = { 
+Schedule.propTypes = {
 	dispatch: PropTypes.func.isRequired,
 	schedule: PropTypes.object.isRequired,
 }
