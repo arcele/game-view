@@ -6,6 +6,7 @@ import Batters from '../components/Batters'
 import { fetchGame, fetchSchedule, makeScheduleCall } from '../actions/main'
 import { LOAD_GAME } from '../types/main'
 import { Link } from 'react-router-dom'
+import Nav from '../components/Nav'
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -40,6 +41,7 @@ class Matchup extends Component {
 		const game = this.props.schedule.game
 		return (
 			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
+			  <Nav />
 				<Link to={`/`}>Schedule</Link>
 				<Table>
 					<TableHead>

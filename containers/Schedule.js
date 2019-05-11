@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { fetchSchedule } from '../actions/main'
+import Nav from '../components/Nav'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
@@ -27,6 +28,7 @@ class Schedule extends Component {
 		})
 		return (
 			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
+				<Nav />
 				{ games.length === 0 &&
 					`Loading, or whatever.`
 				}
