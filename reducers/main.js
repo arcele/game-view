@@ -5,12 +5,12 @@ const initState = {
 	proGames: []
 }
 
-const schedule = (state = { 
+const schedule = (state = {
 		proGames: [],		// list of (soon to be) distinct progames for the day
 		game: undefined,	// the currently in view game
 		requestedGames: false,
 	}, action) => {
-	
+
 	// Simple function to grab a game by id from the list of proGames
 	const getGame = (gameId) => (
 		state.proGames.find(g => g['game_pk'] === gameId)
@@ -35,7 +35,7 @@ const schedule = (state = {
 				if(action.games.filter((h) => { return h.game_pk == g.game_pk }).length === 1) {
 					// unique game, we cool
 					return g
-				} else { 
+				} else {
 					let firstMatch = action.games.find((h) => { return h.game_pk == g.game_pk })
 					if(firstMatch.source_id === g.source_id) {
 						// there's multiple, but, it's the first occurence
@@ -79,13 +79,11 @@ const schedule = (state = {
 			})
 		case SAVE_BVP_DATA:
 			// Save the BVP data to the state
-			let data = action.data.team_bvp_5y.queryResults.row.filter((row) => { if(row.b_tpa){ return row } })
-			if(game.starters && game.starters.home.id === action.pitcher) {
-				game['home_pitcher_bvp'] = data
-			}
-			if(game.starters && game.starters.away.id === action.pitcher) {
-				game['away_pitcher_bvp'] = data
-			}
+			let data = action.data.team_bvp_5y.queryResults.row
+				.filter((row) => { if(row.b_tpa) { return row } }) // only results with plate appearances
+				.sort((x,y) => { return (y.b_tpa - x.b_tpa) })     // sort by plate app. decending
+			game[(game.starters && game.starters.home.id === action.pitcher) ? 'home_pitcher_bvp' : 'away_pitcher_bvp'] = data
+
 			return Object.assign({}, state, {
 				game
 			})
