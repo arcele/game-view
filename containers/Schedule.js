@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { fetchSchedule } from '../actions/main'
 import Nav from '../components/Nav'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -20,8 +19,6 @@ class Schedule extends Component {
 		}
 	}
 	render() {
-		// TODO: remove <Link>s, add clicks to entire rows
-
 		const games = this.props.schedule.proGames.map((proGame) => {
 			// check for dupes
 			return proGame
@@ -44,20 +41,23 @@ class Schedule extends Component {
 					{ games.map((game) => {
 							let gameDate = new Date(game['game_time_local'])
 							return (
-								<TableRow key={game['game_pk']}>
+								<TableRow
+									key={game['game_pk']}
+									data-game-id={game['game_pk']}
+									onClick={this.loadGame}
+									style={{cursor:'pointer'}}
+									hover>
+
 									<TableCell>
-										<Link to={`/game/${game['game_pk']}`}>
-											{game['away_team_full']}
-										</Link>
+										{game['away_team_full']}
 									</TableCell>
 									<TableCell>
-										<Link to={`/game/${game['game_pk']}`}>
-											{game['home_team_full']}
-										</Link>
+										{game['home_team_full']}
 									</TableCell>
 									<TableCell>
 										{gameDate.toLocaleTimeString()}
 									</TableCell>
+
 								</TableRow>
 							)
 						} )
@@ -66,6 +66,12 @@ class Schedule extends Component {
 				</Table>
 			</Paper>
 		)
+	}
+	loadGame(e) {
+		let gameId = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.gameId
+		if(gameId) {
+			window.location.assign(`/game/${gameId}`);
+		}
 	}
 }
 //
