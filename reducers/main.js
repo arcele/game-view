@@ -65,12 +65,12 @@ const schedule = (state = {
 			let starters = Object.assign({}, game.starters, {})
 			if(game.starters.home.id === action.pitcher) {
 				starters.home = Object.assign({}, game.starters.home, {
-					data: action.data
+					data: action.data.row
 				})
 			}
 			if(game.starters.away.id === action.pitcher) {
 				starters.away = Object.assign({}, game.starters.away, {
-					data: action.data
+					data: action.data.row
 				})
 			}
 			game.starters = starters

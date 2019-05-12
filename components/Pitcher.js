@@ -9,20 +9,13 @@ import TableRow from '@material-ui/core/TableRow';
 class Pitcher extends Component {
 	render() {
 		const { team, pitcher } = this.props
-		const statIds = {
-			"W": 53,
-			"L": 54,
-			"ERA": 47,
-			"WHIP": 41,
-			"K/9": 49,
-		}
-		const stats = (pitcher && pitcher.data && pitcher.data.currentSeasonRealStats) ? pitcher.data.currentSeasonRealStats.rawStats : {}
+		const stats = pitcher && pitcher.data
 
 		return (
 			<Table size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell colspan={4}>{ pitcher && pitcher.fullName }</TableCell>
+						<TableCell colSpan={4}>{ pitcher && pitcher.fullName }</TableCell>
 					</TableRow>
 					<TableRow>
 						<TableCell>W-L</TableCell>
@@ -33,10 +26,10 @@ class Pitcher extends Component {
 				</TableHead>
 				<TableBody>
 					<TableRow>
-						<TableCell>{ stats && stats[statIds["W"]] }-{ stats && stats[statIds["L"]] }</TableCell>
-						<TableCell>{ stats && stats[statIds["ERA"]] }</TableCell>
-						<TableCell>{ stats && stats[statIds["WHIP"]] }</TableCell>
-						<TableCell>{ stats && stats[statIds["K/9"]] }</TableCell>
+						<TableCell>{ stats && stats['w'] }-{ stats && stats['l'] }</TableCell>
+						<TableCell>{ stats && stats['era'] }</TableCell>
+						<TableCell>{ stats && stats['whip'] }</TableCell>
+						<TableCell>{ stats && stats['k9'] }</TableCell>
 					</TableRow>
 				</TableBody>
 			</Table>

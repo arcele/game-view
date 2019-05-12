@@ -37,29 +37,25 @@ export const fetchSchedule = () => {
 	}
 }
 
+// TODO: Find an end point that actually has starter data
+
+
+
 export const fetchStarterDetails = (starter, dispatch) => {
 	return new Promise((resolve) => {
-		const name = starter.fullName
-		const lastName = name.split(',')[0]
-		const firstName = name.split(' ')[name.split(' ').length-1]
-		const playerSearchApi = `http://games.espn.com/flb/api/v2/playerInfo?availabilityFilter=all&lastNameFilter=${lastName}&useCurrentSeasonRealStats=true&useCurrentSeasonProjectedStats=false&usePreviousSeasonRealStats=false&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=false&includeTopStatCategories=false&includeLatestNews=true&offset=0&limit=100&top3=false&useTxScoringPeriod=true&processAverages=false&rand=${Math.round(Math.random() * 100000)}`
-		fetch(playerSearchApi).then((res) => {
+    const playerStatsApi = `http://lookup-service-prod.mlb.com/json/named.sport_pitching_tm.bam?league_list_id=%27mlb%27&game_type=%27R%27&season=%272019%27&player_id=%27${starter.id}%27`
+
+		fetch(playerStatsApi).then((res) => {
 			return res.json()
-		}).then((playerSearchData) => {
-			return new Promise((searchResolve) => {
-				playerSearchData.playerInfo.players.map((player) => {
-					// this will break if there's two guys with the same name ¯\_(ツ)_/¯
-					if(player.player.firstName === lastName) {
-						searchResolve(player)
-					}
-				})
-				// we couldn't match a player, I guess it's the first guy?
-				searchResolve(playerSearchData.playerInfo.players[0])
-			}).then((homeStarter) => {
+		}).then((playerStatsData) => {
+			return new Promise((statsResolve) => {
+        statsResolve(playerStatsData)
+			}).then((starterData) => {
 				// we should still get the gameLog, but, this is a nice start
-				dispatch( {type: SAVE_PITCHER_DETAILS, pitcher: starter.id, data: homeStarter })
-				resolve(homeStarter)
-			})		
+        let data = starterData && starterData.sport_pitching_tm && starterData.sport_pitching_tm.queryResults
+				dispatch( {type: SAVE_PITCHER_DETAILS, pitcher: starter.id, data })
+				resolve(data)
+			})
 		})
 	})
 }
@@ -71,7 +67,7 @@ export const fetchGame = (game) => {
 		fetch(probableApi).then((res) => {
 			return res.json()
 		}).then((probableData) => {
-			const starters = probableData.gameData.probablePitchers
+      const starters = probableData.gameData.probablePitchers
 			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, starters })
 			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${game['away_team_id']}&year=2018`
 			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${game['home_team_id']}&year=2018`
