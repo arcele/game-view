@@ -28,7 +28,7 @@ class Schedule extends Component {
 		})
 		return (
 			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
-				<Nav />
+				<Nav currentView="schedule" />
 				{ games.length === 0 &&
 					`Loading, or whatever.`
 				}
