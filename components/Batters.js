@@ -1,36 +1,41 @@
 import React, { Component } from 'react'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
 class Batters extends Component {
 	render() {
 		const players = this.props.players || []
 		return (
-			<div>
-				<table>
-					<thead>
-						<tr>
-							<th>{this.props.team} Batters</th>
-							<th>H/AB</th>
-							<th>AVG</th>
-							<th>HR</th>
-							<th>SLG</th>
-						</tr>
-					</thead>
-					<tbody>
+				<Table size="small">
+					<TableHead>
+						<TableRow>
+							<TableCell>{this.props.team} Batters</TableCell>
+							<TableCell>H/AB</TableCell>
+							<TableCell>AVG</TableCell>
+							<TableCell>HR</TableCell>
+							<TableCell>SLG</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
 						{ players.length === 0 && (
-							<tr colSpan="5"><td>Loading</td></tr>
+							<TableRow colSpan="5">
+								<TableCell>Loading</TableCell>
+							</TableRow>
 						)}
-						{ players.map((player) => 
-							(<tr key={player.player_id}>
-								<td>{player.name}</td>
-								<td>{player.b_total_hits} / { player.b_ab}</td>
-								<td>{player.b_batting_avg}</td>
-								<td>{player.b_home_run}</td>
-								<td>{player.b_slugging_avg}</td>
-							</tr>)
+						{ players.map((player) =>
+							(<TableRow key={player.player_id}>
+								<TableCell>{player.name.split(',')[1].charAt(1)}. {player.name.split(',')[0]}</TableCell>
+								<TableCell>{player.b_total_hits} / { player.b_ab}</TableCell>
+								<TableCell>{player.b_batting_avg}</TableCell>
+								<TableCell>{player.b_home_run}</TableCell>
+								<TableCell>{player.b_slugging_avg}</TableCell>
+							</TableRow>)
 						)}
-					</tbody>
-				</table>
-			</div>
+					</TableBody>
+				</Table>
 		)
 	}
 }

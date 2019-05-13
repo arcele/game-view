@@ -39,13 +39,13 @@ class Matchup extends Component {
 	render() {
 		const game = this.props.schedule.game
 		return (
-			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
+			<Paper style={{maxWidth:'960px', margin: 'auto'}}>
 			  <Nav currentView="matchup" />
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell>{ game && game['away_team_full'] }</TableCell>
-							<TableCell>{ game && game['home_team_full'] }</TableCell>
+							<TableCell>{ game && game['away_team_full'] } Pitching</TableCell>
+							<TableCell>{ game && game['home_team_full'] } Pitching</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -58,10 +58,10 @@ class Matchup extends Component {
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell>
+							<TableCell style={{verticalAlign:'top'}}>
 								<Batters team={game && game['home_team_short']} players={game && game['away_pitcher_bvp']} />
 							</TableCell>
-							<TableCell>
+							<TableCell style={{verticalAlign:'top'}}>
 								<Batters team={game && game['away_team_short']} players={game && game['home_pitcher_bvp']} />
 							</TableCell>
 						</TableRow>
