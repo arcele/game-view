@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA } from '../types/main'
+import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS } from '../types/main'
 import { combineReducers } from 'redux'
 
 const initState = {
@@ -10,6 +10,8 @@ const schedule = (state = {
 		game: undefined,	// the currently in view game
 		requestedGames: false,
 	}, action) => {
+	let proGames;
+
 
 	// Simple function to grab a game by id from the list of proGames
 	const getGame = (gameId) => (
@@ -31,7 +33,7 @@ const schedule = (state = {
 			})
 		case SAVE_SCHEDULE:
 			// Remove dupes from and save the daily schedule once it's been fetched
-			let proGames = action.games.filter((g) => {
+			proGames = action.games.filter((g) => {
 				if(action.games.filter((h) => { return h.game_pk == g.game_pk }).length === 1) {
 					// unique game, we cool
 					return g
@@ -82,10 +84,36 @@ const schedule = (state = {
 			let data = action.data.team_bvp_5y.queryResults.row
 				.filter((row) => { if(row.b_tpa) { return row } }) // only results with plate appearances
 				.sort((x,y) => { return (y.b_tpa - x.b_tpa) })     // sort by plate app. decending
-			game[(game.starters && game.starters.home.id === action.pitcher) ? 'home_pitcher_bvp' : 'away_pitcher_bvp'] = data
 
+			game[(game.starters && game.starters.home.id === action.pitcher) ? 'home_pitcher_bvp' : 'away_pitcher_bvp'] = data
+			game.bvpDataLoaded = true;
 			return Object.assign({}, state, {
 				game
+			})
+		case SAVE_BETTING_ODDS:
+			debugger;
+			proGames = [...state.proGames]; // clone proGames, to mess with it
+			let today = new Date()
+			action.odds.data.map((matchup) => {
+				proGames.map((proGame) =>{
+					if(proGame.home_team_full === matchup.home_team) {
+						// we're in the proGame of our odds
+						// also need to check that the game is today?  TODO make this more flexible to accept whatever date we're viewing
+						let matchupDate = new Date(matchup.commence_time * 1000)
+						if(matchupDate.getDate() === today.getDate() &&
+							matchupDate.getMonth() === matchupDate.getMonth()) {
+
+
+								console.log('setting odds for game:', proGame, matchup.sites)
+								proGame.odds = matchup.sites
+							} else {
+								console.log('dang, got odds for another day or something', matchup)
+							}
+					}
+				})
+			})
+			return Object.assign({}, state, {
+				proGames
 			})
 		default:
 			return state
@@ -97,7 +125,7 @@ const unused = (state = { }, action) => {
 			return state
 	}
 }
-
+// TODO: break the combiners up in an actual logial way ie : schedule/game
 const reducer = combineReducers({
 	schedule,
 	unused,

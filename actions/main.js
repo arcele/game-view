@@ -1,6 +1,7 @@
 import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS } from '../types/main'
 import fetch from 'isomorphic-fetch'
-
+//apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
+import apiKey from '../config/apiKey'
 
 export const savePlayer = (player) => {
   return dispatch => {
@@ -33,13 +34,11 @@ export const fetchSchedule = () => {
 	const gameYear = new Date().getFullYear()
 	return dispatch => {
 		dispatch({type: REQUEST_SCHEDULE})
-		makeScheduleCall(gameDate, gameYear, dispatch)
+		makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
+      makeBettingOddsCall(dispatch)
+    })
 	}
 }
-
-// TODO: Find an end point that actually has starter data
-
-
 
 export const fetchStarterDetails = (starter, dispatch) => {
 	return new Promise((resolve) => {
@@ -93,4 +92,19 @@ export const fetchGame = (game) => {
 		const gameApi = `https://statsapi.mlb.com/api/v1.1/game/${id}/feed/live?language=en`
 		// get all of our other neat game data here.
 	}
+}
+
+export const makeBettingOddsCall = (dispatch) => {
+  // Returns a promise that resolves with the most recent upcoming MLB betting odds
+  return new Promise((resolve) => {
+    let oddsApi = `https://api.the-odds-api.com/v3/odds?sport=baseball_mlb&region=uk&mkt=h2h&apiKey=${apiKey}`
+    fetch(oddsApi).then((res) => {
+      return res.json()
+    }).then((odds) => {
+      console.log('weve got the odds, put em in the state, dog', odds)
+      dispatch({type: 'SAVE_BETTING_ODDS', odds})
+      resolve(odds)
+    })
+  })
+
 }
