@@ -97,7 +97,7 @@ export const fetchGame = (game) => {
 export const makeBettingOddsCall = (dispatch) => {
   // Returns a promise that resolves with the most recent upcoming MLB betting odds
   return new Promise((resolve) => {
-    let oddsApi = `https://api.the-odds-api.com/v3/odds?sport=baseball_mlb&region=uk&mkt=h2h&apiKey=${apiKey}`
+    let oddsApi = `https://api.the-odds-api.com/v3/odds?sport=baseball_mlb&region=us&mkt=h2h&apiKey=${apiKey}`
     fetch(oddsApi).then((res) => {
       return res.json()
     }).then((odds) => {

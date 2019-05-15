@@ -91,27 +91,24 @@ const schedule = (state = {
 				game
 			})
 		case SAVE_BETTING_ODDS:
-			debugger;
-			proGames = [...state.proGames]; // clone proGames, to mess with it
+			proGames = [...state.proGames]
 			let today = new Date()
 			action.odds.data.map((matchup) => {
 				proGames.map((proGame) =>{
 					if(proGame.home_team_full === matchup.home_team) {
-						// we're in the proGame of our odds
-						// also need to check that the game is today?  TODO make this more flexible to accept whatever date we're viewing
+						// home team match
 						let matchupDate = new Date(matchup.commence_time * 1000)
 						if(matchupDate.getDate() === today.getDate() &&
 							matchupDate.getMonth() === matchupDate.getMonth()) {
-
-
-								console.log('setting odds for game:', proGame, matchup.sites)
-								proGame.odds = matchup.sites
-							} else {
-								console.log('dang, got odds for another day or something', matchup)
+								// home team match AND day of game match
+								// TODO make this more flexible to accept whatever date we're viewing
+								// TODO support double headers
+								console.log('goign for it :', matchup, proGame)
+								proGame.odds = matchup && matchup.sites
 							}
 					}
 				})
-			})
+			});
 			return Object.assign({}, state, {
 				proGames
 			})
