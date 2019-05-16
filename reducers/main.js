@@ -104,11 +104,36 @@ const schedule = (state = {
 								// TODO make this more flexible to accept whatever date we're viewing
 								// TODO support double headers
 								console.log('goign for it :', matchup, proGame)
-								proGame.odds = matchup && matchup.sites
+
+								// odds come in as european lines, calculate average odds
+								let euroOdds = [
+									(matchup.sites.reduce((a,b) => {
+										return a.odds ? a.odds.h2h[0] : a + b.odds.h2h[0]
+									}, 0) / matchup.sites.length)
+									,
+									(matchup.sites.reduce((a,b) => {
+										return a.odds ? a.odds.h2h[1] : a + b.odds.h2h[1]
+									}, 0) / matchup.sites.length)
+								]
+								let usOdds = new Array()
+								// calculate these as us odds
+								euroOdds.map((euroOdd, i) => {
+									usOdds[i] = euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
+								})
+
+								// save 'em on the proGame
+								proGame.home_odds = {
+									us: proGame.home_team_full == matchup.teams[0] ? usOdds[0] : usOdds[1],
+									eur: proGame.home_team_full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
+								};
+								proGame.away_odds = {
+									us: proGame.away_team_full == matchup.teams[0] ? usOdds[0] : usOdds[1],
+									eur: proGame.home_team_full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
+								}
 							}
-					}
-				})
-			});
+						}
+					});
+				});
 			return Object.assign({}, state, {
 				proGames
 			})

@@ -45,25 +45,6 @@ class Schedule extends Component {
 									awayApplOdds,
 									homeApplOdds
 
-							if(game.odds) {
-									awayOdds = game.odds.reduce((a,b) => {
-										return a.odds ? a.odds.h2h[1] : a +b.odds.h2h[1]
-									}, 0) / game.odds.length;
-									if(awayOdds >= 2.00) {
-										awayApplOdds = '+' + Math.round((awayOdds - 1) * 100)
-									} else {
-										awayApplOdds = Math.round(-100 / (awayOdds - 1 ))
-									}
-									homeOdds = game.odds.reduce((a,b) => {
-										return a.odds ? a.odds.h2h[0] : a +b.odds.h2h[0]
-									}, 0) / game.odds.length;
-									if(homeOdds >= 2.00) {
-										homeApplOdds = '+' + Math.round((homeOdds - 1) * 100)
-									} else {
-										homeApplOdds = Math.round(-100 / (homeOdds - 1 ))
-									}
-							}
-
 							return (
 								<TableRow
 									key={game['game_pk']}
@@ -74,11 +55,11 @@ class Schedule extends Component {
 
 									<TableCell>
 										{game['away_team_full']}
-										&nbsp;{awayApplOdds && `(${awayApplOdds})`}
+										&nbsp;{game['away_odds'] && game['away_odds'].us && `(${game['away_odds'].us})`}
 									</TableCell>
 									<TableCell>
 										{game['home_team_full']}
-										&nbsp;{homeApplOdds && `(${homeApplOdds})`}
+										&nbsp;{game['home_odds'] && game['home_odds'].us && `(${game['home_odds'].us})`}
 									</TableCell>
 									<TableCell>
 										{gameDate.toLocaleTimeString()}
