@@ -13,11 +13,12 @@ import TableRow from '@material-ui/core/TableRow';
 
 class Schedule extends Component {
 	componentDidMount() {
-		if(!this.props.schedule.requestedGames) {
-			// We haven't fetched the schedule yet, so, like, do it.
+		if(	!this.props.schedule.requestedGames &&
+				(!this.props.schedule.proGames || this.props.schedule.proGames.length == 0)) {
 			this.props.dispatch(fetchSchedule())
 		}
 	}
+
 	render() {
 		const games = this.props.schedule.proGames.map((proGame) => {
 			// check for dupes
@@ -49,7 +50,7 @@ class Schedule extends Component {
 								<TableRow
 									key={game['game_pk']}
 									data-game-id={game['game_pk']}
-									onClick={this.loadGame}
+									onClick={this.loadGame.bind(this)}
 									style={{cursor:'pointer'}}
 									hover>
 
@@ -74,10 +75,10 @@ class Schedule extends Component {
 			</Paper>
 		)
 	}
-	loadGame(e) {
+	loadGame(e, props) {
 		let gameId = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.gameId
 		if(gameId) {
-			window.location.assign(`/game/${gameId}`);
+				this.props.history.push(`game/${gameId}`)
 		}
 	}
 }
