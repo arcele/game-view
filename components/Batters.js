@@ -7,6 +7,7 @@ import TableRow from '@material-ui/core/TableRow';
 
 class Batters extends Component {
 	render() {
+		// TODO: Handle case of no Results returned, but not 'loading' any more
 		const players = this.props.players || []
 		return (
 				<Table size="small">
@@ -21,8 +22,8 @@ class Batters extends Component {
 					</TableHead>
 					<TableBody>
 						{ players.length === 0 && (
-							<TableRow colSpan="5">
-								<TableCell>Loading</TableCell>
+							<TableRow>
+								<TableCell colSpan="5" style={{textAlign:'center'}}>Loading...</TableCell>
 							</TableRow>
 						)}
 						{ players.map((player) =>

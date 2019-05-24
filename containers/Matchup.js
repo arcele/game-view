@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Pitcher from '../components/Pitcher'
 import Batters from '../components/Batters'
-import { fetchGame, fetchSchedule, makeScheduleCall } from '../actions/main'
+import { fetchGame, makeScheduleCall, makeBettingOddsCall } from '../actions/main'
 import { LOAD_GAME } from '../types/main'
 import Nav from '../components/Nav'
 
@@ -20,15 +20,22 @@ class Matchup extends Component {
 	componentDidMount() {
 		// make sure we have the schedule
 		const { dispatch, match, schedule } = this.props
+
 		new Promise((resolve) => {
 			if(schedule && schedule.proGames.length > 0) {
 				// We have the proGames on the state, continue on
+				console.log('no need to fetch schedule.')
 				resolve()
 			} else {
 				// fetch the proGames, resolve once we've got 'em'
 				const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
 				const gameYear = new Date().getFullYear()
-				makeScheduleCall(gameDate, gameYear, dispatch).then(() => resolve())
+				// this is mostly just duping the fetchSchedule() call but i have to dispatch this, so, yeah, whatever
+				makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
+					makeBettingOddsCall(dispatch).then(() => {
+						resolve()
+					});
+				});
 			}
 		}).then(() => {
 			dispatch({ type: LOAD_GAME, gameId: match.params.id })
@@ -44,8 +51,14 @@ class Matchup extends Component {
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell>{ game && game['away_team_full'] } Pitching</TableCell>
-							<TableCell>{ game && game['home_team_full'] } Pitching</TableCell>
+							<TableCell>
+								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game['away_team_id']) + ".svg"} />
+								{ game && game['away_team_full'] } ({ game && game['away_odds'] && game['away_odds'].us })
+							</TableCell>
+							<TableCell>
+								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game['home_team_id']) + ".svg"} />
+								{ game && game['home_team_full'] } ({ game && game['home_odds'] && game['home_odds'].us })
+							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
