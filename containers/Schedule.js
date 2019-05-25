@@ -64,7 +64,7 @@ class Schedule extends Component {
 									</TableCell>
 									<TableCell>
 										{game.homeTeam && game.homeTeam.full}
-										&nbsp;{game.homeTeam && game.homeTeam.odds && game.homeTeam.odds.us && `(${game.awayTeam.odds.us})`}
+										&nbsp;{game.homeTeam && game.homeTeam.odds && game.homeTeam.odds.us && `(${game.homeTeam.odds.us})`}
 									</TableCell>
 									<TableCell>
 										{gameDate.toLocaleTimeString()}

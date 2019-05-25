@@ -97,40 +97,34 @@ const schedule = (state = {
 								// home team match AND day of game match
 								// TODO make this more flexible to accept whatever date we're viewing
 								// TODO support double headers
-								console.log('goign for it :', matchup, proGame)
 
-								// odds come in as european lines, calculate average odds
-								let betterOdds = {
-									sites: matchup.sites,
-									average: averageOdds(matchup.sites)
-								}
-
-/* moved this to a function below (averageOdds), nuke most of this and make the odds a lil cleaner */
-								let euroOdds = [
-									(matchup.sites.reduce((a,b) => {
-										return a.odds ? a.odds.h2h[0] : a + b.odds.h2h[0]
-									}, 0) / matchup.sites.length)
-									,
-									(matchup.sites.reduce((a,b) => {
-										return a.odds ? a.odds.h2h[1] : a + b.odds.h2h[1]
-									}, 0) / matchup.sites.length)
-								]
-								let usOdds = new Array()
-								// calculate these as us odds
-								euroOdds.map((euroOdd, i) => {
-									usOdds[i] = euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
-								})
+								let avgOdds = averageOdds(matchup.sites),
+										euroOdds = avgOdds.eur,
+										usOdds = avgOdds.us,
+										homeIdx = matchup.teams[0] == proGame.homeTeam.full ? 0 : 1,
+										awayIdx = matchup.teams[0] == proGame.awayTeam.full ? 0 : 1;
 
 								// save 'em on the proGame
 								proGame.homeTeam.odds = {
-									us: proGame.homeTeam.full == matchup.teams[0] ? usOdds[0] : usOdds[1],
-									eur: proGame.homeTeam.full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
+									us: usOdds[homeIdx],
+									eur: euroOdds[homeIdx],
+									sites: matchup.sites.map((m) => Object.assign({}, m, {
+										odds: {
+											eur: m.odds.h2h[homeIdx],
+											us: euroOddToUsOdd(m.odds.h2h[homeIdx])
+										}
+									}))
 								};
 								proGame.awayTeam.odds = {
-									us: proGame.awayTeam.full == matchup.teams[0] ? usOdds[0] : usOdds[1],
-									eur: proGame.homeTeam.full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
+									us: usOdds[awayIdx],
+									eur: euroOdds[awayIdx],
+									sites: matchup.sites.map((m) => Object.assign({}, m, {
+										odds: {
+											eur: m.odds.h2h[awayIdx],
+											us: euroOddToUsOdd(m.odds.h2h[awayIdx])
+										}
+									}))
 								}
-								proGame.betterOdds = betterOdds;
 							}
 						}
 					});
@@ -156,7 +150,7 @@ const averageOdds = (odds) => {
 	let usOdds = new Array()
 	// calculate these as us odds
 	euroOdds.map((euroOdd, i) => {
-		usOdds[i] = euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
+		usOdds[i] = euroOddToUsOdd(euroOdd)
 	})
 	return ({'eur': euroOdds, 'us': usOdds})
 }
@@ -180,6 +174,10 @@ const buildProGameObject = (gameData) => {
 		full: gameData.away_team_full,
 	}
 	return proGameObject
+}
+
+const euroOddToUsOdd = (euroOdd) => {
+	return euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
 }
 
 const unused = (state = { }, action) => {
