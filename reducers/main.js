@@ -33,18 +33,12 @@ const schedule = (state = {
 			})
 		case SAVE_SCHEDULE:
 			// Remove dupes from and save the daily schedule once it's been fetched
-			proGames = action.games.filter((g) => {
-				if(action.games.filter((h) => { return h.game_pk == g.game_pk }).length === 1) {
-					// unique game, we cool
-					return g
-				} else {
-					let firstMatch = action.games.find((h) => { return h.game_pk == g.game_pk })
-					if(firstMatch.source_id === g.source_id) {
-						// there's multiple, but, it's the first occurence
-						return g
-					}
-				}
+			proGames = action.games.filter((g, i) =>
+				(action.games.findIndex((h) => (h.game_pk == g.game_pk)) == i)
+			).map((g) => {
+				return buildProGameObject(g)
 			})
+
 			return Object.assign({}, state, {
 				proGames
 			})
@@ -95,7 +89,7 @@ const schedule = (state = {
 			let today = new Date()
 			action.odds.data.map((matchup) => {
 				proGames.map((proGame) =>{
-					if(proGame.home_team_full === matchup.home_team) {
+					if(proGame.homeTeam.full === matchup.home_team) {
 						// home team match
 						let matchupDate = new Date(matchup.commence_time * 1000)
 						if(matchupDate.getDate() === today.getDate() &&
@@ -106,6 +100,12 @@ const schedule = (state = {
 								console.log('goign for it :', matchup, proGame)
 
 								// odds come in as european lines, calculate average odds
+								let betterOdds = {
+									sites: matchup.sites,
+									average: averageOdds(matchup.sites)
+								}
+
+/* moved this to a function below (averageOdds), nuke most of this and make the odds a lil cleaner */
 								let euroOdds = [
 									(matchup.sites.reduce((a,b) => {
 										return a.odds ? a.odds.h2h[0] : a + b.odds.h2h[0]
@@ -122,14 +122,15 @@ const schedule = (state = {
 								})
 
 								// save 'em on the proGame
-								proGame.home_odds = {
-									us: proGame.home_team_full == matchup.teams[0] ? usOdds[0] : usOdds[1],
-									eur: proGame.home_team_full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
+								proGame.homeTeam.odds = {
+									us: proGame.homeTeam.full == matchup.teams[0] ? usOdds[0] : usOdds[1],
+									eur: proGame.homeTeam.full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
 								};
-								proGame.away_odds = {
-									us: proGame.away_team_full == matchup.teams[0] ? usOdds[0] : usOdds[1],
-									eur: proGame.home_team_full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
+								proGame.awayTeam.odds = {
+									us: proGame.awayTeam.full == matchup.teams[0] ? usOdds[0] : usOdds[1],
+									eur: proGame.homeTeam.full == matchup.teams[0] ? euroOdds[0] : euroOdds[1]
 								}
+								proGame.betterOdds = betterOdds;
 							}
 						}
 					});
@@ -140,6 +141,45 @@ const schedule = (state = {
 		default:
 			return state
 	}
+}
+
+const averageOdds = (odds) => {
+	let euroOdds = [
+		(odds.reduce((a,b) => {
+			return a.odds ? a.odds.h2h[0] : a + b.odds.h2h[0]
+		}, 0) / odds.length)
+		,
+		(odds.reduce((a,b) => {
+			return a.odds ? a.odds.h2h[1] : a + b.odds.h2h[1]
+		}, 0) / odds.length)
+	]
+	let usOdds = new Array()
+	// calculate these as us odds
+	euroOdds.map((euroOdd, i) => {
+		usOdds[i] = euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
+	})
+	return ({'eur': euroOdds, 'us': usOdds})
+}
+
+const buildProGameObject = (gameData) => {
+	let proGameObject = {},
+			copyKeys = ['game_pk', 'game_date', 'game_time_et']; // all keys to be copied directly to the Object
+
+	// console.log('initial data:', gameData)
+	copyKeys.forEach((k) => (proGameObject[k] = gameData[k]))
+	proGameObject.homeTeam = {
+		id: gameData.home_team_id,
+		abbrev: gameData.home_team_abbrev,
+		short: gameData.home_team_short,
+		full: gameData.home_team_full
+	}
+	proGameObject.awayTeam = {
+		id: gameData.away_team_id,
+		abbrev: gameData.away_team_abbrev,
+		short: gameData.away_team_short,
+		full: gameData.away_team_full,
+	}
+	return proGameObject
 }
 
 const unused = (state = { }, action) => {

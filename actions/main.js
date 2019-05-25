@@ -66,8 +66,8 @@ export const fetchGame = (game) => {
 		}).then((probableData) => {
       const starters = probableData.gameData.probablePitchers
 			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, starters })
-			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${game['away_team_id']}&year=2018`
-			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${game['home_team_id']}&year=2018`
+			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${game.awayTeam.id}&year=2018`
+			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${game.homeTeam.id}&year=2018`
 			fetch(homePitcherApi).then((res) => {
 				return res.json()
 			}).then((homeData) => {

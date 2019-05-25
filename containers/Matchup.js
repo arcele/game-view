@@ -52,30 +52,30 @@ class Matchup extends Component {
 					<TableHead>
 						<TableRow>
 							<TableCell>
-								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game['away_team_id']) + ".svg"} />
-								{ game && game['away_team_full'] } ({ game && game['away_odds'] && game['away_odds'].us })
+								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game.awayTeam && game.awayTeam.id) + ".svg"} />
+								{ game && game.awayTeam && game.awayTeam.full } ({ game && game.awayTeam && game.awayTeam.odds && game.awayTeam.odds.us })
 							</TableCell>
 							<TableCell>
-								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game['home_team_id']) + ".svg"} />
-								{ game && game['home_team_full'] } ({ game && game['home_odds'] && game['home_odds'].us })
+								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game.homeTeam && game.homeTeam.id) + ".svg"} />
+								{ game && game.homeTeam && game.homeTeam.full } ({ game && game.homeTeam && game.homeTeam.odds && game.homeTeam.odds.us })
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						<TableRow>
 							<TableCell>
-								<Pitcher team={game && game['away_team_abbrev']} pitcher={game && game.starters && game.starters.away} />
+								<Pitcher team={game && game.awayTeam && game.awayTeam.abbrev} pitcher={game && game.starters && game.starters.away} />
 							</TableCell>
 							<TableCell>
-								<Pitcher team={game && game['home_team_abbrev']} pitcher={game && game.starters && game.starters.home} />
+								<Pitcher team={game && game.homeTeam && game.homeTeam.abbrev} pitcher={game && game.starters && game.starters.home} />
 							</TableCell>
 						</TableRow>
 						<TableRow>
 							<TableCell style={{verticalAlign:'top'}}>
-								<Batters team={game && game['home_team_short']} players={game && game['away_pitcher_bvp']} />
+								<Batters team={game && game.homeTeam && game.homeTeam.short} players={game && game['away_pitcher_bvp']} />
 							</TableCell>
 							<TableCell style={{verticalAlign:'top'}}>
-								<Batters team={game && game['away_team_short']} players={game && game['home_pitcher_bvp']} />
+								<Batters team={game && game.awayTeam && game.awayTeam.short} players={game && game['home_pitcher_bvp']} />
 							</TableCell>
 						</TableRow>
 					</TableBody>

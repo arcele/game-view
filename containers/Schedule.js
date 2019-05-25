@@ -24,6 +24,10 @@ class Schedule extends Component {
 			// check for dupes
 			return proGame
 		})
+
+
+		// TODO: ADD MOUSOVER TO ODDS TO SHOW BREAKDOWN OF ODDS BY site
+		//       Make Team Display/Odds Display seperate component
 		return (
 			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
 				<Nav currentView="schedule" />
@@ -40,7 +44,7 @@ class Schedule extends Component {
 					</TableHead>
 					<TableBody>
 					{ games.map((game) => {
-							let gameDate = new Date(game['game_time_local']),
+							let gameDate = new Date(game['game_time_et']),
 									awayOdds,
 									homeOdds,
 									awayApplOdds,
@@ -55,12 +59,12 @@ class Schedule extends Component {
 									hover>
 
 									<TableCell>
-										{game['away_team_full']}
-										&nbsp;{game['away_odds'] && game['away_odds'].us && `(${game['away_odds'].us})`}
+										{game.awayTeam && game.awayTeam.full}
+										&nbsp;{game.awayTeam && game.awayTeam.odds && game.awayTeam.odds.us && `(${game.awayTeam.odds.us})`}
 									</TableCell>
 									<TableCell>
-										{game['home_team_full']}
-										&nbsp;{game['home_odds'] && game['home_odds'].us && `(${game['home_odds'].us})`}
+										{game.homeTeam && game.homeTeam.full}
+										&nbsp;{game.homeTeam && game.homeTeam.odds && game.homeTeam.odds.us && `(${game.awayTeam.odds.us})`}
 									</TableCell>
 									<TableCell>
 										{gameDate.toLocaleTimeString()}
