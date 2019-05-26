@@ -6,6 +6,7 @@ import Batters from '../components/Batters'
 import { fetchGame, makeScheduleCall, makeBettingOddsCall } from '../actions/main'
 import { LOAD_GAME } from '../types/main'
 import Nav from '../components/Nav'
+import Odds from '../components/Odds'
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -53,11 +54,13 @@ class Matchup extends Component {
 						<TableRow>
 							<TableCell>
 								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game.awayTeam && game.awayTeam.id) + ".svg"} />
-								{ game && game.awayTeam && game.awayTeam.full } ({ game && game.awayTeam && game.awayTeam.odds && game.awayTeam.odds.us })
+								{ game && game.awayTeam && game.awayTeam.full }
+								<Odds odds={game && game.awayTeam && game.awayTeam.odds} format='us' />
 							</TableCell>
 							<TableCell>
 								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game.homeTeam && game.homeTeam.id) + ".svg"} />
-								{ game && game.homeTeam && game.homeTeam.full } ({ game && game.homeTeam && game.homeTeam.odds && game.homeTeam.odds.us })
+								{ game && game.homeTeam && game.homeTeam.full }
+								<Odds odds={game && game.homeTeam && game.homeTeam.odds} format='us' />
 							</TableCell>
 						</TableRow>
 					</TableHead>

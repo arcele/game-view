@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { fetchSchedule } from '../actions/main'
 import Nav from '../components/Nav'
 import PropTypes from 'prop-types'
+import Odds from '../components/Odds'
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -60,11 +61,11 @@ class Schedule extends Component {
 
 									<TableCell>
 										{game.awayTeam && game.awayTeam.full}
-										&nbsp;{game.awayTeam && game.awayTeam.odds && game.awayTeam.odds.us && `(${game.awayTeam.odds.us})`}
+										<Odds odds={game.awayTeam && game.awayTeam.odds} format='us' />
 									</TableCell>
 									<TableCell>
 										{game.homeTeam && game.homeTeam.full}
-										&nbsp;{game.homeTeam && game.homeTeam.odds && game.homeTeam.odds.us && `(${game.homeTeam.odds.us})`}
+										<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
 									</TableCell>
 									<TableCell>
 										{gameDate.toLocaleTimeString()}
