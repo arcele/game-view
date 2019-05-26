@@ -33,6 +33,7 @@ const schedule = (state = {
 			})
 		case SAVE_SCHEDULE:
 			// Remove dupes from and save the daily schedule once it's been fetched
+			let scheduleDate = action.date;
 			proGames = action.games.filter((g, i) =>
 				(action.games.findIndex((h) => (h.game_pk == g.game_pk)) == i)
 			).map((g) => {
@@ -40,7 +41,8 @@ const schedule = (state = {
 			})
 
 			return Object.assign({}, state, {
-				proGames
+				proGames,
+				scheduleDate
 			})
 		case LOAD_GAME:
 			// Pulls a game from the proGames, hope you've got proGames.

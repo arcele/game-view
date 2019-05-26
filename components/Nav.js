@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-
-
+import { connect } from 'react-redux'
+import moment from 'moment'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -16,7 +16,9 @@ class Nav extends Component {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" style={{width:"70%"}}>
-            Game View
+            Game View {
+							` for ${moment(this.props.schedule && this.props.schedule.scheduleDate).format('ddd, MMM D')}`
+						}
           </Typography>
 					{ currentView !== 'schedule' &&
 						<Link to='/' style={{textDecoration:'none'}}>
@@ -29,5 +31,10 @@ class Nav extends Component {
   }
 
 }
+const mapStateToProps = (state) => {
+	return {
+		schedule: state.gameView.schedule,
+	}
+}
 
-export default Nav
+export default connect(mapStateToProps)(Nav)

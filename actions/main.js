@@ -22,14 +22,14 @@ export const makeScheduleCall = (gameDate, season, dispatch) => {
 			return response.json()
 		}).then((resJson) => {
 			if(dispatch) {
-				dispatch({type: SAVE_SCHEDULE, games: resJson['mlb_broadcast_info']['queryResults']['row'] })
+				dispatch({type: SAVE_SCHEDULE, games: resJson['mlb_broadcast_info']['queryResults']['row'], date: gameDate })
 			}
 			resolve(resJson)
 		})
 	})
 }
-export const fetchSchedule = () => {
-	const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
+export const fetchSchedule = (gameDate) => {
+	if(!gameDate) gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
 	const gameYear = new Date().getFullYear()
 	return dispatch => {
 		makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
@@ -96,7 +96,7 @@ export const makeBettingOddsCall = (dispatch) => {
   // Returns a promise that resolves with the most recent upcoming MLB betting odds
 
   // uncomment next line to skip the betting odds call which is throttled to 500 req/mo
-  //return new Promise((r) => ( r() ))
+//  return new Promise((r) => ( r() ))
 
   return new Promise((resolve) => {
     let oddsApi = `https://api.the-odds-api.com/v3/odds?sport=baseball_mlb&region=us&mkt=h2h&apiKey=${apiKey}`
