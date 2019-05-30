@@ -14,13 +14,13 @@ const schedule = (state = {
 
 
 	// Simple function to grab a game by id from the list of proGames
-	const getGame = (gameId) => (
-		state.proGames.find(g => g['game_pk'] === gameId)
-	)
+	const getGame = (gameDate, gameId) => {
+		return(state[gameDate].find(g => g['game_pk'] === gameId))
+	}
 
 	// Return the currently loaded game
 	const getCurrentGame = () => (
-		state.game ? getGame(state.game['game_pk']) : {}
+		state.game ? getGame(state.scheduleDate, state.game['game_pk']) : {}
 	)
 
 	const game = getCurrentGame() // use this to save stuff to the state
@@ -39,18 +39,18 @@ const schedule = (state = {
 			).map((g) => {
 				return buildProGameObject(g)
 			})
-
-			return Object.assign({}, state, {
-				proGames,
+			let ret = Object.assign({}, state, {
 				scheduleDate
 			})
+			ret[scheduleDate] = proGames;
+			return ret
 		case LOAD_GAME:
 			// Pulls a game from the proGames, hope you've got proGames.
 			return Object.assign({}, state, {
 				// This creates a reference to the game, which is rad for reading,
 				// grab the game using the getGame utility function and save it here
 				// to update the actual proGame
-				game: getGame(action.gameId)
+				game: getGame(state.scheduleDate, action.gameId)
 			})
 		case SAVE_PROBABLE_STARTERS:
 			// Save the probable starters to the original game element
@@ -87,7 +87,7 @@ const schedule = (state = {
 				game
 			})
 		case SAVE_BETTING_ODDS:
-			proGames = [...state.proGames]
+			proGames = [...state[state.scheduleDate]]
 			let today = new Date()
 			action.odds.data.map((matchup) => {
 				proGames.map((proGame) =>{
@@ -131,9 +131,10 @@ const schedule = (state = {
 						}
 					});
 				});
-			return Object.assign({}, state, {
-				proGames
-			})
+				ret = Object.assign({}, state, {})
+				ret[state.scheduleDate] = proGames;
+				return ret
+
 		default:
 			return state
 	}
@@ -182,15 +183,25 @@ const euroOddToUsOdd = (euroOdd) => {
 	return euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
 }
 
-const unused = (state = { }, action) => {
-	switch (action.type) {		default:
-			return state
-	}
+
+/* Desired State Structure
+ *
+{
+	schedule: {
+		YYYYMMDD: [proGame, proGame, proGame],
+		YYYYMMDD: [proGame, proGame, proGame],
+	},
+	proGame: {
+		//active pro game from schedule
+	},
+	scheduleDate: YYYYMMDD,
 }
-// TODO: break the combiners up in an actual logial way ie : schedule/game
+*/
+
+
 const reducer = combineReducers({
 	schedule,
-	unused,
 })
-// to do move this off of multiple reducers, it's dumb  game reducer is hot fat garbage
+
+//const reducer = schedule
 export default reducer

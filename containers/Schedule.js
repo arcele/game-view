@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { fetchSchedule } from '../actions/main'
 import Nav from '../components/Nav'
 import PropTypes from 'prop-types'
 import Odds from '../components/Odds'
+import moment from 'moment'
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -14,21 +16,16 @@ import TableRow from '@material-ui/core/TableRow';
 
 class Schedule extends Component {
 	componentDidMount() {
-		if(	!this.props.schedule.requestedGames &&
-				(!this.props.schedule.proGames || this.props.schedule.proGames.length == 0)) {
+		let scheduleDate = this.props.schedule && this.props.schedule.scheduleDate;
+		if(!scheduleDate || scheduleDate && !this.props.schedule[scheduleDate]) {
 			this.props.dispatch(fetchSchedule())
 		}
 	}
 
 	render() {
-		const games = this.props.schedule.proGames.map((proGame) => {
-			// check for dupes
-			return proGame
-		})
+		let scheduleDate = this.props.schedule && this.props.schedule.scheduleDate,
+				games = scheduleDate ? this.props.schedule[this.props.schedule.scheduleDate] : []
 
-
-		// TODO: ADD MOUSOVER TO ODDS TO SHOW BREAKDOWN OF ODDS BY site
-		//       Make Team Display/Odds Display seperate component
 		return (
 			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
 				<Nav currentView="schedule" />
@@ -37,6 +34,17 @@ class Schedule extends Component {
 				}
 				<Table>
 					<TableHead>
+					  <TableRow>
+							<TableCell colSpan="3" align="center">
+							<Link to={'/?date=' +  moment(scheduleDate).add(-1,'day').format('YYYYMMDD') } style={{textDecoration: 'none', marginRight: 15}}>
+							  &laquo;
+							</Link>
+							{ scheduleDate && moment(scheduleDate).format('ddd, MMM D')}
+							<Link to={'/?date=' +  moment(scheduleDate).add(1,'day').format('YYYYMMDD') } style={{textDecoration: 'none', marginLeft: 15}}>
+								&raquo;
+							</Link>
+							</TableCell>
+						</TableRow>
 						<TableRow>
 							<TableCell>Away</TableCell>
 							<TableCell>Home</TableCell>
@@ -45,12 +53,7 @@ class Schedule extends Component {
 					</TableHead>
 					<TableBody>
 					{ games.map((game) => {
-							let gameDate = new Date(game['game_time_et']),
-									awayOdds,
-									homeOdds,
-									awayApplOdds,
-									homeApplOdds
-
+							let gameDate = new Date(game['game_time_et'])
 							return (
 								<TableRow
 									key={game['game_pk']}
@@ -68,7 +71,7 @@ class Schedule extends Component {
 										<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
 									</TableCell>
 									<TableCell>
-										{gameDate.toLocaleTimeString()}
+										{moment(gameDate).format('h:mm a')}
 									</TableCell>
 
 								</TableRow>
@@ -87,7 +90,7 @@ class Schedule extends Component {
 		}
 	}
 }
-//
+
 Schedule.propTypes = {
 	dispatch: PropTypes.func.isRequired,
 	schedule: PropTypes.object.isRequired,
@@ -97,7 +100,6 @@ const mapStateToProps = (state) => {
 	return {
 		schedule: state.gameView.schedule,
 	}
-
 }
 
 export default connect(mapStateToProps)(Schedule)
