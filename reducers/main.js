@@ -1,5 +1,6 @@
 import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE } from '../types/main'
 import { combineReducers } from 'redux'
+import moment from 'moment'
 
 const initState = {
 	proGames: []
@@ -91,19 +92,15 @@ const schedule = (state = {
 				proGames.map((proGame) =>{
 					if(proGame.homeTeam.full === matchup.home_team) {
 						// home team match
-						let matchupDate = new Date(matchup.commence_time * 1000)
-						if(matchupDate.getDate() === today.getDate() &&
-							matchupDate.getMonth() === matchupDate.getMonth()) {
+						let matchupMoment = moment(new Date(matchup.commence_time * 1000))
+						if(matchupMoment.format('YYYY-MM-DD') == state.scheduleDate) {
 								// home team match AND day of game match
-								// TODO make this more flexible to accept whatever date we're viewing
 								// TODO support double headers
-
 								let avgOdds = averageOdds(matchup.sites),
 										euroOdds = avgOdds.eur,
 										usOdds = avgOdds.us,
 										homeIdx = matchup.teams[0] == proGame.homeTeam.full ? 0 : 1,
 										awayIdx = matchup.teams[0] == proGame.awayTeam.full ? 0 : 1;
-
 								// save 'em on the proGame
 								proGame.homeTeam.odds = {
 									us: usOdds[homeIdx],
@@ -129,7 +126,9 @@ const schedule = (state = {
 						}
 					});
 				});
-				ret = Object.assign({}, state, {})
+				ret = Object.assign({}, state, {
+					oddsResult: action.odds
+				})
 				ret[state.scheduleDate] = proGames;
 				return ret
 
