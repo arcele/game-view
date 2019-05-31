@@ -16,6 +16,8 @@ class App extends Component {
 			<Router history={gameViewHistory}>
 				<div id="matchup-frame">
 					<Route exact path="/" component={Schedule}/>
+					<Route exact path="/schedule/" component={Schedule} />
+					<Route exact path="/schedule/:date" component={Schedule} />
 					<Route exact path="/game/:id" component={Matchup} />
 				</div>
 			</Router>

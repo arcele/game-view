@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { fetchSchedule } from '../actions/main'
+import { Link, withRouter } from 'react-router-dom'
+import { fetchSchedule, loadSchedule } from '../actions/main'
 import Nav from '../components/Nav'
 import PropTypes from 'prop-types'
 import Odds from '../components/Odds'
 import moment from 'moment'
+
+import { SET_SCHEDULE_DATE } from '../types/main'
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -16,9 +18,20 @@ import TableRow from '@material-ui/core/TableRow';
 
 class Schedule extends Component {
 	componentDidMount() {
-		let scheduleDate = this.props.schedule && this.props.schedule.scheduleDate;
-		if(!scheduleDate || scheduleDate && !this.props.schedule[scheduleDate]) {
-			this.props.dispatch(fetchSchedule())
+		this.checkScheduleStatus()
+	}
+
+	componentDidUpdate() {
+		this.checkScheduleStatus()
+	}
+
+	checkScheduleStatus() {
+		let scheduleDate = this.props.match && this.props.match.params && this.props.match.params.date || moment().format('YYYY-MM-DD')
+		if(!this.props.schedule[scheduleDate]) {
+			this.props.dispatch(fetchSchedule(scheduleDate))
+		} else if(scheduleDate != this.props.schedule.scheduleDate) {
+			// load the already downloaded schedule into the current view
+			this.props.dispatch({ type: SET_SCHEDULE_DATE, date: scheduleDate })
 		}
 	}
 
@@ -36,11 +49,11 @@ class Schedule extends Component {
 					<TableHead>
 					  <TableRow>
 							<TableCell colSpan="3" align="center">
-							<Link to={'/?date=' +  moment(scheduleDate).add(-1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginRight: 15}}>
+							<Link to={'/schedule/' +  moment(scheduleDate).add(-1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginRight: 15}}>
 							  &laquo;
 							</Link>
 							{ scheduleDate && moment(scheduleDate).format('ddd, MMM D')}
-							<Link to={'/?date=' +  moment(scheduleDate).add(1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginLeft: 15}}>
+							<Link to={'/schedule/' +  moment(scheduleDate).add(1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginLeft: 15}}>
 								&raquo;
 							</Link>
 							</TableCell>
@@ -117,4 +130,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps)(Schedule)
+export default withRouter(connect(mapStateToProps)(Schedule))

@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS } from '../types/main'
+import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE } from '../types/main'
 import { combineReducers } from 'redux'
 
 const initState = {
@@ -41,13 +41,13 @@ const schedule = (state = {
 			})
 			ret[scheduleDate] = proGames;
 			return ret
+		case 'SET_SCHEDULE_DATE':
+			return Object.assign({}, state, {
+				scheduleDate: action.date
+			})
 		case LOAD_GAME:
-			// Pulls a game from the proGames, hope you've got proGames.
-			console.log('yo:', getGame(state.scheduleDate, action.gameId))
 			return Object.assign({}, state, {
 				// This creates a reference to the game, which is rad for reading,
-				// grab the game using the getGame utility function and save it here
-				// to update the actual proGame
 				game: getGame(state.scheduleDate, action.gameId)
 			})
 		case SAVE_PROBABLE_STARTERS:
