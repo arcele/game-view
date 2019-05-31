@@ -29,12 +29,17 @@ export const makeScheduleCall = (gameDate, season, dispatch) => {
     })
   })
 }
-export const fetchSchedule = (gameDate) => {
+
+export const fetchSchedule = (gameDate, oddsResult) => {
   if(!gameDate) gameDate = moment().format('YYYY-MM-DD')
 	const gameYear = moment().format('YYYY')
 	return dispatch => {
 		makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
-      makeBettingOddsCall(dispatch)
+      if(oddsResult) { // run the saved odds through our schedule again
+        dispatch({type: 'SAVE_BETTING_ODDS', odds: oddsResult})
+      } else { // no odds fetched yet, need to grab them
+        makeBettingOddsCall(dispatch)
+      }
     })
 	}
 }

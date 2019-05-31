@@ -28,7 +28,7 @@ class Schedule extends Component {
 	checkScheduleStatus() {
 		let scheduleDate = this.props.match && this.props.match.params && this.props.match.params.date || moment().format('YYYY-MM-DD')
 		if(!this.props.schedule[scheduleDate]) {
-			this.props.dispatch(fetchSchedule(scheduleDate))
+			this.props.dispatch(fetchSchedule(scheduleDate, this.props.schedule.oddsResult))
 		} else if(scheduleDate != this.props.schedule.scheduleDate) {
 			// load the already downloaded schedule into the current view
 			this.props.dispatch({ type: SET_SCHEDULE_DATE, date: scheduleDate })
