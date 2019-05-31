@@ -21,9 +21,9 @@ class Matchup extends Component {
 	componentDidMount() {
 		// make sure we have the schedule
 		const { dispatch, match, schedule } = this.props
-
+		const scheduleDate = schedule && schedule.scheduleDate
 		new Promise((resolve) => {
-			if(schedule && schedule.proGames.length > 0) {
+			if(schedule && scheduleDate && schedule[scheduleDate] && schedule[scheduleDate].length > 0) {
 				// We have the proGames on the state, continue on
 				console.log('no need to fetch schedule.')
 				resolve()
@@ -53,12 +53,12 @@ class Matchup extends Component {
 					<TableHead>
 						<TableRow>
 							<TableCell>
-								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game.awayTeam && game.awayTeam.id) + ".svg"} />
+								<img style={{height:75}} src={game && game.awayTeam && "https://www.mlbstatic.com/team-logos/" + game.awayTeam.id + ".svg"} />
 								{ game && game.awayTeam && game.awayTeam.full }
 								<Odds odds={game && game.awayTeam && game.awayTeam.odds} format='us' />
 							</TableCell>
 							<TableCell>
-								<img style={{height:75}} src={"https://www.mlbstatic.com/team-logos/" + (game && game.homeTeam && game.homeTeam.id) + ".svg"} />
+								<img style={{height:75}} src={game && game.homeTeam && "https://www.mlbstatic.com/team-logos/" + game.homeTeam.id + ".svg"} />
 								{ game && game.homeTeam && game.homeTeam.full }
 								<Odds odds={game && game.homeTeam && game.homeTeam.odds} format='us' />
 							</TableCell>
