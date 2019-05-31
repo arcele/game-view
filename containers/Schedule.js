@@ -14,6 +14,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+
 class Schedule extends Component {
 	componentDidMount() {
 		let scheduleDate = this.props.schedule && this.props.schedule.scheduleDate;
@@ -32,10 +35,8 @@ class Schedule extends Component {
 				{ games.length === 0 &&
 					`Loading, or whatever.`
 				}
-				<Table>
-					<TableHead>
-					  <TableRow>
-							<TableCell colSpan="3" align="center">
+				<Grid container spacing={3}>
+					<Grid item xs={12}>
 							<Link to={'/?date=' +  moment(scheduleDate).add(-1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginRight: 15}}>
 							  &laquo;
 							</Link>
@@ -43,43 +44,41 @@ class Schedule extends Component {
 							<Link to={'/?date=' +  moment(scheduleDate).add(1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginLeft: 15}}>
 								&raquo;
 							</Link>
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Away</TableCell>
-							<TableCell>Home</TableCell>
-							<TableCell>First Pitch</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
+					</Grid>
+					<Grid item xs={5}>Away</Grid>
+					<Grid item xs={5}>Home</Grid>
+					<Grid item xs={2}>First Pitch</Grid>
 					{ games.map((game) => {
-							let gameDate = new Date(game['gameDate'])
-							return (
-								<TableRow
-									key={game['gamePk']}
-									data-game-id={game['gamePk']}
-									onClick={this.loadGame.bind(this)}
-									style={{cursor:'pointer'}}
-									hover>
+						let gameDate = new Date(game['gameDate'])
+						return(
+							<Grid item xs={12}>
+								<Card>
+									<Grid container spacing={2}>
+										<Grid item xs={5}>
+											{game.awayTeam && game.awayTeam.full}
+											<Odds odds={game.awayTeam && game.awayTeam.odds} format='us' />
+											<br />
+											{game.awayTeam && game.awayTeam.record && ( game.awayTeam.record.wins + ' - ' + game.awayTeam.record.losses)}
+										</Grid>
+										<Grid item xs={5}>
+											{game.homeTeam && game.homeTeam.full}
+											<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
+											<br />
+											{game.homeTeam && game.homeTeam.record && ( game.homeTeam.record.wins + ' - ' + game.homeTeam.record.losses)}
 
-									<TableCell>
-										{game.awayTeam && game.awayTeam.full}
-										<Odds odds={game.awayTeam && game.awayTeam.odds} format='us' />
-									</TableCell>
-									<TableCell>
-										{game.homeTeam && game.homeTeam.full}
-										<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
-									</TableCell>
-									<TableCell>
-										{moment(gameDate).format('h:mm a')}
-									</TableCell>
+										</Grid>
+										<Grid item xs={2}>
+											{moment(gameDate).format('h:mm a')}
+										</Grid>
+									</Grid>
+								</Card>
+							</Grid>
+						)
+					})}
 
-								</TableRow>
-							)
-						} )
-					}
-				  </TableBody>
-				</Table>
+
+
+				</Grid>
 			</Paper>
 		)
 	}
