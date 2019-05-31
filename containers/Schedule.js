@@ -48,7 +48,7 @@ class Schedule extends Component {
 						<TableRow>
 							<TableCell>Away</TableCell>
 							<TableCell>Home</TableCell>
-							<TableCell>First Pitch</TableCell>
+							<TableCell>Status</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -63,21 +63,30 @@ class Schedule extends Component {
 									hover>
 
 									<TableCell>
-										<Odds odds={game.awayTeam && game.awayTeam.odds} format='us' />
+										<img style={{height:15, verticalAlign:'middle', marginRight: 5}} src={game && game.awayTeam && "https://www.mlbstatic.com/team-logos/" + game.awayTeam.id + ".svg"} />
+										{game && game.status && game.status.statusCode != 'F' && game.status.statusCode != 'I' && game.status.statusCode != 'DR' &&
+											<Odds odds={game.awayTeam && game.awayTeam.odds} format='us' />
+										}
 										{game.awayTeam && game.awayTeam.full}
 										<span className="record">
 										{ game.awayTeam && game.awayTeam.record && `(${game.awayTeam.record.wins}-${game.awayTeam.record.losses})` }
 										</span>
 									</TableCell>
 									<TableCell>
-										<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
+										<img style={{height:15, verticalAlign:'middle', marginRight: 5}} src={game && game.homeTeam && "https://www.mlbstatic.com/team-logos/" + game.homeTeam.id + ".svg"} />
+										{game && game.status && game.status.statusCode != 'F' && game.status.statusCode != 'I' && game.status.statusCode != 'DR' &&
+											<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
+										}
 										{game.homeTeam && game.homeTeam.full}
 										<span className="record">
 										{ game.homeTeam && game.homeTeam.record && `(${game.homeTeam.record.wins}-${game.homeTeam.record.losses})` }
 										</span>
 									</TableCell>
 									<TableCell>
-										{moment(gameDate).format('h:mm a')}
+										{game && game.status && (game.status.statusCode == 'P' || game.status.statusCode == 'S') && moment(gameDate).format('h:mm a')}
+										{game && game.status && game.status.statusCode == 'F' && (`Final ${game.awayTeam.score}-${game.homeTeam.score}`) }
+										{game && game.status && game.status.statusCode == 'I' && (`${game.awayTeam.score}-${game.homeTeam.score}`)}
+										{game && game.status && game.status.statusCode == 'DR' && game.status.detailedState}
 									</TableCell>
 
 								</TableRow>

@@ -96,7 +96,7 @@ export const makeBettingOddsCall = (dispatch) => {
   // Returns a promise that resolves with the most recent upcoming MLB betting odds
 
   // uncomment next line to skip the betting odds call which is throttled to 500 req/mo
-  return new Promise((r) => ( r() ))
+  //return new Promise((r) => ( r() ))
 
   return new Promise((resolve) => {
     let oddsApi = `https://api.the-odds-api.com/v3/odds?sport=baseball_mlb&region=us&mkt=h2h&apiKey=${apiKey}`

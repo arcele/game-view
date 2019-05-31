@@ -9,6 +9,10 @@ class Odds extends Component {
         this.props.odds && this.props.odds.sites && this.props.odds.sites.forEach((site) => {
           toolTipText += `${site.site_key} : ${site.odds.us} \n`
         })
+/*        if(!data) {
+          data = { us: '-120' }
+        }
+*/
     if(data) {
       return(
         <Tooltip title={toolTipText}>
