@@ -63,12 +63,18 @@ class Schedule extends Component {
 									hover>
 
 									<TableCell>
-										{game.awayTeam && game.awayTeam.full}
 										<Odds odds={game.awayTeam && game.awayTeam.odds} format='us' />
+										{game.awayTeam && game.awayTeam.full}
+										<span className="record">
+										{ game.awayTeam && game.awayTeam.record && `(${game.awayTeam.record.wins}-${game.awayTeam.record.losses})` }
+										</span>
 									</TableCell>
 									<TableCell>
-										{game.homeTeam && game.homeTeam.full}
 										<Odds odds={game.homeTeam && game.homeTeam.odds} format='us' />
+										{game.homeTeam && game.homeTeam.full}
+										<span className="record">
+										{ game.homeTeam && game.homeTeam.record && `(${game.homeTeam.record.wins}-${game.homeTeam.record.losses})` }
+										</span>
 									</TableCell>
 									<TableCell>
 										{moment(gameDate).format('h:mm a')}

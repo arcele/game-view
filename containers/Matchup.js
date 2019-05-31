@@ -55,14 +55,23 @@ class Matchup extends Component {
 						<TableRow>
 							<TableCell>
 								<img style={{height:75}} src={game && game.awayTeam && "https://www.mlbstatic.com/team-logos/" + game.awayTeam.id + ".svg"} />
-								{ game && game.awayTeam && game.awayTeam.full }
 								<Odds odds={game && game.awayTeam && game.awayTeam.odds} format='us' />
+
+								{ game && game.awayTeam && game.awayTeam.full }
+								<span className="record">
+								{ game && game.awayTeam && game.awayTeam.record && `(${game.awayTeam.record.wins}-${game.awayTeam.record.losses})` }
+								</span>
+
 							</TableCell>
 							<TableCell>
 								<img style={{height:75}} src={game && game.homeTeam && "https://www.mlbstatic.com/team-logos/" + game.homeTeam.id + ".svg"} />
-								{ game && game.homeTeam && game.homeTeam.full }
 								<Odds odds={game && game.homeTeam && game.homeTeam.odds} format='us' />
-							</TableCell>
+
+								{ game && game.homeTeam && game.homeTeam.full }
+								<span className="record">
+								{ game && game.homeTeam && game.homeTeam.record && `(${game.homeTeam.record.wins}-${game.homeTeam.record.losses})` }
+								</span>
+								</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
