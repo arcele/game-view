@@ -11,17 +11,19 @@ import { Link } from 'react-router-dom'
 class Nav extends Component {
 
 	render() {
-		let currentView = this && this.props && this.props.currentView;
+		let currentView = this && this.props && this.props.currentView,
+				viewDate = moment(this.props.schedule && this.props.schedule.scheduleDate);
+
 		return(
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" style={{width:"70%"}}>
             Game View {
-							` for ${moment(this.props.schedule && this.props.schedule.scheduleDate).format('ddd, MMM D')}`
+							` for ${viewDate.format('ddd, MMM D')}`
 						}
           </Typography>
 					{ currentView !== 'schedule' &&
-						<Link to='/' style={{textDecoration:'none'}}>
+						<Link to={"/schedule/"+viewDate.format('YYYY-MM-DD')} style={{textDecoration:'none'}}>
 							<Button variant="contained">Back to Schedule</Button>
 						</Link>
 					}

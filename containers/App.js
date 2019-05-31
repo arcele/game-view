@@ -18,11 +18,10 @@ class App extends Component {
 					<Route exact path="/" component={Schedule}/>
 					<Route exact path="/schedule/" component={Schedule} />
 					<Route exact path="/schedule/:date" component={Schedule} />
-					<Route exact path="/game/:id" component={Matchup} />
+					<Route exact path="/game/:date/:id" component={Matchup} />
 				</div>
 			</Router>
 		)
-
 	}
 
 	componentDidMount() {

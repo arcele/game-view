@@ -114,7 +114,7 @@ class Schedule extends Component {
 	loadGame(e, props) {
 		let gameId = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.gameId
 		if(gameId) {
-				this.props.history.push(`game/${gameId}`)
+				this.props.history.push(`/game/${this.props.schedule.scheduleDate}/${gameId}`)
 		}
 	}
 }
