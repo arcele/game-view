@@ -182,22 +182,6 @@ const euroOddToUsOdd = (euroOdd) => {
 	return euroOdd >= 2.00 ? ('+' + Math.round((euroOdd - 1) * 100)) : (Math.round(-100 / (euroOdd - 1 )))
 }
 
-
-/* Desired State Structure
- *
-{
-	schedule: {
-		YYYYMMDD: [proGame, proGame, proGame],
-		YYYYMMDD: [proGame, proGame, proGame],
-	},
-	proGame: {
-		//active pro game from schedule
-	},
-	scheduleDate: YYYYMMDD,
-}
-*/
-
-
 const reducer = combineReducers({
 	schedule,
 })

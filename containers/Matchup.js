@@ -30,7 +30,7 @@ class Matchup extends Component {
 				resolve()
 			} else {
 				// fetch the proGames, resolve once we've got 'em'
-				const gameDate = moment().format('YYYYMMDD'),
+				const gameDate = moment().format('YYYY-MM-DD'),
 				 			gameYear = moment().format('YYYY')
 				// this is mostly just duping the fetchSchedule() call but i have to dispatch this, so, yeah, whatever
 				makeScheduleCall(gameDate, gameYear, dispatch).then(() => {

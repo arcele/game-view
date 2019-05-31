@@ -36,11 +36,11 @@ class Schedule extends Component {
 					<TableHead>
 					  <TableRow>
 							<TableCell colSpan="3" align="center">
-							<Link to={'/?date=' +  moment(scheduleDate).add(-1,'day').format('YYYYMMDD') } style={{textDecoration: 'none', marginRight: 15}}>
+							<Link to={'/?date=' +  moment(scheduleDate).add(-1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginRight: 15}}>
 							  &laquo;
 							</Link>
 							{ scheduleDate && moment(scheduleDate).format('ddd, MMM D')}
-							<Link to={'/?date=' +  moment(scheduleDate).add(1,'day').format('YYYYMMDD') } style={{textDecoration: 'none', marginLeft: 15}}>
+							<Link to={'/?date=' +  moment(scheduleDate).add(1,'day').format('YYYY-MM-DD') } style={{textDecoration: 'none', marginLeft: 15}}>
 								&raquo;
 							</Link>
 							</TableCell>
