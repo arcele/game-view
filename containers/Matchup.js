@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 import Pitcher from '../components/Pitcher'
 import Batters from '../components/Batters'
 import { fetchGame, makeScheduleCall, makeBettingOddsCall } from '../actions/main'
@@ -29,8 +30,8 @@ class Matchup extends Component {
 				resolve()
 			} else {
 				// fetch the proGames, resolve once we've got 'em'
-				const gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
-				const gameYear = new Date().getFullYear()
+				const gameDate = moment().format('YYYYMMDD'),
+				 			gameYear = moment().format('YYYY')
 				// this is mostly just duping the fetchSchedule() call but i have to dispatch this, so, yeah, whatever
 				makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
 					makeBettingOddsCall(dispatch).then(() => {
