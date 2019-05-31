@@ -15,12 +15,12 @@ const schedule = (state = {
 
 	// Simple function to grab a game by id from the list of proGames
 	const getGame = (gameDate, gameId) => {
-		return(state[gameDate].find(g => g['game_pk'] === gameId))
+		return(state[gameDate].find(g => g.gamePk == gameId))
 	}
 
 	// Return the currently loaded game
 	const getCurrentGame = () => (
-		state.game ? getGame(state.scheduleDate, state.game['game_pk']) : {}
+		state.game ? getGame(state.scheduleDate, state.game.gamePk) : {}
 	)
 
 	const game = getCurrentGame() // use this to save stuff to the state
@@ -32,11 +32,8 @@ const schedule = (state = {
 				requestedGames: true
 			})
 		case SAVE_SCHEDULE:
-			// Remove dupes from and save the daily schedule once it's been fetched
 			let scheduleDate = action.date;
-			proGames = action.games.filter((g, i) =>
-				(action.games.findIndex((h) => (h.game_pk == g.game_pk)) == i)
-			).map((g) => {
+			proGames = action.games.map((g) => {
 				return buildProGameObject(g)
 			})
 			let ret = Object.assign({}, state, {
@@ -46,6 +43,7 @@ const schedule = (state = {
 			return ret
 		case LOAD_GAME:
 			// Pulls a game from the proGames, hope you've got proGames.
+			console.log('yo:', getGame(state.scheduleDate, action.gameId))
 			return Object.assign({}, state, {
 				// This creates a reference to the game, which is rad for reading,
 				// grab the game using the getGame utility function and save it here
@@ -159,23 +157,24 @@ const averageOdds = (odds) => {
 }
 
 const buildProGameObject = (gameData) => {
-	let proGameObject = {},
-			copyKeys = ['game_pk', 'game_date', 'game_time_et']; // all keys to be copied directly to the Object
 
-	// console.log('initial data:', gameData)
+	let proGameObject = {},
+			copyKeys = ['gamePk', 'gameDate', 'status']; // all keys to be copied directly to the Object
+
 	copyKeys.forEach((k) => (proGameObject[k] = gameData[k]))
 	proGameObject.homeTeam = {
-		id: gameData.home_team_id,
-		abbrev: gameData.home_team_abbrev,
-		short: gameData.home_team_short,
-		full: gameData.home_team_full
+		id: gameData.teams.home.team.id,
+		full: gameData.teams.home.team.name,
+		score: gameData.teams.home.score,
+		record: gameData.teams.home.leagueRecord,
 	}
 	proGameObject.awayTeam = {
-		id: gameData.away_team_id,
-		abbrev: gameData.away_team_abbrev,
-		short: gameData.away_team_short,
-		full: gameData.away_team_full,
+		id: gameData.teams.away.team.id,
+		full: gameData.teams.away.team.name,
+		score: gameData.teams.away.score,
+		record: gameData.teams.away.leagueRecord,
 	}
+
 	return proGameObject
 }
 

@@ -1,4 +1,5 @@
 import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS } from '../types/main'
+import moment from 'moment'
 import fetch from 'isomorphic-fetch'
 //apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
 import apiKey from '../config/apiKey'
@@ -16,21 +17,21 @@ export const savePlayer = (player) => {
 
 export const makeScheduleCall = (gameDate, season, dispatch) => {
 	// make schedule call, return a promise that resolves with the contents of the schedule
-	const scheduleApi = `http://lookup-service-prod.mlb.com/json/named.mlb_broadcast_info.bam?src_type='TV'&tcid=mm_mlb_schedule&sort_by='game_time_et_asc'&home_away='H'&start_date='${gameDate}'&end_date='${gameDate}'&season='${season}'`
-	return new Promise((resolve) => {
-		fetch(scheduleApi).then((response) => {
-			return response.json()
-		}).then((resJson) => {
-			if(dispatch) {
-				dispatch({type: SAVE_SCHEDULE, games: resJson['mlb_broadcast_info']['queryResults']['row'], date: gameDate })
-			}
-			resolve(resJson)
-		})
-	})
+  let scheduleApi = `http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&date=2019-05-30`
+  return new Promise((resolve) => {
+    fetch(scheduleApi).then((resp) => {
+      return resp.json()
+    }).then((resJson) => {
+      if(dispatch) {
+        dispatch({type: SAVE_SCHEDULE, games: resJson.dates[0].games, date: gameDate})
+      }
+      resolve(resJson)
+    })
+  })
 }
 export const fetchSchedule = (gameDate) => {
-	if(!gameDate) gameDate = new Date().toISOString().split('T')[0].replace(/-/g,'')
-	const gameYear = new Date().getFullYear()
+  if(!gameDate) gameDate = moment().format('YYYYMMDD')
+	const gameYear = moment().format('YYYY')
 	return dispatch => {
 		makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
       makeBettingOddsCall(dispatch)
@@ -58,8 +59,8 @@ export const fetchStarterDetails = (starter, dispatch) => {
 }
 
 export const fetchGame = (game) => {
-	return dispatch => {
-		const id = game['game_pk']
+  return dispatch => {
+		const id = game['gamePk']
 		const probableApi = `https://statsapi.mlb.com/api/v1.1/game/${id}/feed/live?language=en&timecode=`
 		fetch(probableApi).then((res) => {
 			return res.json()
@@ -79,8 +80,7 @@ export const fetchGame = (game) => {
 					// now we've got the bvp data, and teh probables, we can fetch the pitcher data, first we need to get the espn playerIds, because we want espn stuff for this like game log
 					fetchStarterDetails(starters.home, dispatch).then( (homeStarter) => {
 						fetchStarterDetails(starters.away, dispatch).then( (awayStarter) => {
-							// What else?!
-							console.log(`we've got all the game data we want for now`)
+							// What else
 						})
 					})
 				})

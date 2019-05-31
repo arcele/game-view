@@ -53,11 +53,11 @@ class Schedule extends Component {
 					</TableHead>
 					<TableBody>
 					{ games.map((game) => {
-							let gameDate = new Date(game['game_time_et'])
+							let gameDate = new Date(game['gameDate'])
 							return (
 								<TableRow
-									key={game['game_pk']}
-									data-game-id={game['game_pk']}
+									key={game['gamePk']}
+									data-game-id={game['gamePk']}
 									onClick={this.loadGame.bind(this)}
 									style={{cursor:'pointer'}}
 									hover>
