@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE } from '../types/main'
+import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE, LOAD_ODDS_FROM_LOCAL_STORAGE, LOAD_ODDS_FROM_STATE } from '../types/main'
 import { combineReducers } from 'redux'
 import moment from 'moment'
 
@@ -85,6 +85,8 @@ const schedule = (state = {
 			return Object.assign({}, state, {
 				game
 			})
+		case LOAD_ODDS_FROM_STATE:
+		case LOAD_ODDS_FROM_LOCAL_STORAGE:
 		case SAVE_BETTING_ODDS:
 			proGames = [...state[state.scheduleDate]]
 			let today = new Date()
@@ -130,6 +132,16 @@ const schedule = (state = {
 					oddsResult: action.odds
 				})
 				ret[state.scheduleDate] = proGames;
+				if(action.type === SAVE_BETTING_ODDS) {
+					// save odds call to local storage if we just fetched them.
+					let oddsForStorage = Object.assign({}, action.odds, {
+						requested: moment()
+					})
+					localStorage.setItem('oddsData-' + moment().format("YYYYMMDD"), JSON.stringify(oddsForStorage))
+				} else if(action.type === LOAD_ODDS_FROM_LOCAL_STORAGE) {
+					// show some kinda badge that says when we fetched the local storage odds
+					ret.oddsFetchedAt = moment(action.odds.requested)
+				}
 				return ret
 
 		default:

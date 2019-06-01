@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS, LOAD_ODDS_FROM_STATE, LOAD_ODDS_FROM_LOCAL_STORAGE, SAVE_BETTING_ODDS } from '../types/main'
 import moment from 'moment'
 import fetch from 'isomorphic-fetch'
 //apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
@@ -35,8 +35,12 @@ export const fetchSchedule = (gameDate, oddsResult) => {
 	const gameYear = moment().format('YYYY')
 	return dispatch => {
 		makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
+
+      let localStorageOdds = localStorage.getItem('oddsData-' + moment().format("YYYYMMDD"))
       if(oddsResult) { // run the saved odds through our schedule again
-        dispatch({type: 'SAVE_BETTING_ODDS', odds: oddsResult})
+        dispatch({type: LOAD_ODDS_FROM_STATE, odds: oddsResult})
+      } else if(localStorageOdds != null) { // load the adds we pulled up from local storage
+        dispatch({type: LOAD_ODDS_FROM_LOCAL_STORAGE, odds: JSON.parse(localStorageOdds)})
       } else { // no odds fetched yet, need to grab them
         makeBettingOddsCall(dispatch)
       }
@@ -109,7 +113,7 @@ export const makeBettingOddsCall = (dispatch) => {
       return res.json()
     }).then((odds) => {
       console.log('weve got the odds, put em in the state, dog', odds)
-      dispatch({type: 'SAVE_BETTING_ODDS', odds})
+      dispatch({type: SAVE_BETTING_ODDS, odds})
       resolve(odds)
     })
   })

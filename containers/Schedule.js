@@ -16,6 +16,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import Snackbar from '@material-ui/core/Snackbar';
+
 class Schedule extends Component {
 	componentDidMount() {
 		this.checkScheduleStatus()
@@ -37,7 +39,8 @@ class Schedule extends Component {
 
 	render() {
 		let scheduleDate = this.props.schedule && this.props.schedule.scheduleDate,
-				games = scheduleDate ? this.props.schedule[this.props.schedule.scheduleDate] : []
+				games = scheduleDate ? this.props.schedule[this.props.schedule.scheduleDate] : [],
+				oddsFetchedAt = this.props.schedule && this.props.schedule.oddsFetchedAt
 
 		return (
 			<Paper style={{maxWidth:'700px', margin: 'auto'}}>
@@ -108,7 +111,15 @@ class Schedule extends Component {
 					}
 				  </TableBody>
 				</Table>
+				<Snackbar
+					anchorOrigin={{ vertical:'bottom', horizontal:'left'}}
+					autoHideDuration={1500}
+					open={oddsFetchedAt != undefined}
+					message={<span id="fetchedOddsAt">Odds Fetched {oddsFetchedAt && oddsFetchedAt.format("ddd, MMM D h:mm a")}</span>} />
 			</Paper>
+
+
+
 		)
 	}
 	loadGame(e, props) {
