@@ -8,7 +8,7 @@ import { fetchGame, makeScheduleCall, makeBettingOddsCall } from '../actions/mai
 import { LOAD_GAME } from '../types/main'
 import Nav from '../components/Nav'
 import Odds from '../components/Odds'
-
+import Team from '../components/Team'
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -54,24 +54,11 @@ class Matchup extends Component {
 					<TableHead>
 						<TableRow>
 							<TableCell>
-								<img style={{height:75}} src={game && game.awayTeam && "https://www.mlbstatic.com/team-logos/" + game.awayTeam.id + ".svg"} />
-								<Odds odds={game && game.awayTeam && game.awayTeam.odds} format='us' />
-
-								{ game && game.awayTeam && game.awayTeam.full }
-								<span className="record">
-								{ game && game.awayTeam && game.awayTeam.record && `(${game.awayTeam.record.wins}-${game.awayTeam.record.losses})` }
-								</span>
-
+									{ <Team team={game && game.awayTeam} /> }
 							</TableCell>
 							<TableCell>
-								<img style={{height:75}} src={game && game.homeTeam && "https://www.mlbstatic.com/team-logos/" + game.homeTeam.id + ".svg"} />
-								<Odds odds={game && game.homeTeam && game.homeTeam.odds} format='us' />
-
-								{ game && game.homeTeam && game.homeTeam.full }
-								<span className="record">
-								{ game && game.homeTeam && game.homeTeam.record && `(${game.homeTeam.record.wins}-${game.homeTeam.record.losses})` }
-								</span>
-								</TableCell>
+									{ <Team team={game && game.homeTeam} /> }
+							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
