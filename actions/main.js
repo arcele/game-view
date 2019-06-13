@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS, LOAD_ODDS_FROM_STATE, LOAD_ODDS_FROM_LOCAL_STORAGE, SAVE_BETTING_ODDS } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS, LOAD_ODDS_FROM_STATE, LOAD_ODDS_FROM_LOCAL_STORAGE, SAVE_BETTING_ODDS, SAVE_STANDINGS } from '../types/main'
 import moment from 'moment'
 import fetch from 'isomorphic-fetch'
 //apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
@@ -30,20 +30,50 @@ export const makeScheduleCall = (gameDate, season, dispatch) => {
   })
 }
 
+export const makeStandingsCalls = (dispatch) => {
+  let leagues = [ // leagues we care about from http://statsapi.mlb.com/api/v1/league/?seasonId=2018
+      103, // American
+      104, // National
+  ],
+    divisionApi = 'http://statsapi.mlb.com/api/v1/divisions/?seasonId=2019&leagueId={leagueId}',
+    leagueApi = 'http://statsapi.mlb.com/api/v1/standings/?leagueId={leagueId}'
+    console.log('doin stuff')
+    return Promise.all(
+      leagues.map((league) => {
+          return new Promise((res) => {
+            fetch(leagueApi.replace('{leagueId}', league)).then((resp) => {
+              return resp.json()
+            }).then((standings) => {
+              dispatch({type: SAVE_STANDINGS, standings, league })
+              res(standings)
+            })
+          })
+      })
+    )
+}
+
+// this is bad naming, like, all around
+// we should have an init function that chains these
+// requests together
+// schedule -> standings -> odds
+// instead of the weirdly duped logic across the schedule
+// and matchup page, because, it's getting out of control
+
 export const fetchSchedule = (gameDate, oddsResult) => {
   if(!gameDate) gameDate = moment().format('YYYY-MM-DD')
 	const gameYear = moment().format('YYYY')
 	return dispatch => {
-		makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
-
-      let localStorageOdds = localStorage.getItem('oddsData-' + moment().format("YYYYMMDD"))
-      if(oddsResult) { // run the saved odds through our schedule again
-        dispatch({type: LOAD_ODDS_FROM_STATE, odds: oddsResult})
-      } else if(localStorageOdds != null) { // load the adds we pulled up from local storage
-        dispatch({type: LOAD_ODDS_FROM_LOCAL_STORAGE, odds: JSON.parse(localStorageOdds)})
-      } else { // no odds fetched yet, need to grab them
-        makeBettingOddsCall(dispatch)
-      }
+    makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
+      makeStandingsCalls(dispatch).then(() => {
+        let localStorageOdds = localStorage.getItem('oddsData-' + moment().format("YYYYMMDD"))
+        if(oddsResult) { // run the saved odds through our schedule again
+          dispatch({type: LOAD_ODDS_FROM_STATE, odds: oddsResult})
+        } else if(localStorageOdds != null) { // load the adds we pulled up from local storage
+          dispatch({type: LOAD_ODDS_FROM_LOCAL_STORAGE, odds: JSON.parse(localStorageOdds)})
+        } else { // no odds fetched yet, need to grab them
+          makeBettingOddsCall(dispatch)
+        }
+      })
     })
 	}
 }

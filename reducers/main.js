@@ -1,9 +1,22 @@
-import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE, LOAD_ODDS_FROM_LOCAL_STORAGE, LOAD_ODDS_FROM_STATE } from '../types/main'
+import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE, LOAD_ODDS_FROM_LOCAL_STORAGE, LOAD_ODDS_FROM_STATE, SAVE_STANDINGS } from '../types/main'
 import { combineReducers } from 'redux'
 import moment from 'moment'
 
 const initState = {
 	proGames: []
+}
+const standings = (state = {
+		103: {},
+		104: {},
+	}, action) => {
+		switch (action.type) {
+			case SAVE_STANDINGS:
+				let standings = Object.assign({}, state, {})
+				standings[action.league] = action.standings.records;
+				return standings
+			default:
+				return state;
+		}
 }
 
 const schedule = (state = {
@@ -144,6 +157,7 @@ const schedule = (state = {
 				}
 				return ret
 
+
 		default:
 			return state
 	}
@@ -195,6 +209,7 @@ const euroOddToUsOdd = (euroOdd) => {
 
 const reducer = combineReducers({
 	schedule,
+	standings,
 })
 
 //const reducer = schedule
