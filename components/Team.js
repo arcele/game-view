@@ -4,8 +4,8 @@ import Odds from './Odds'
 
 class Team extends Component {
   render() {
-    console.log('team:', this)
     let team = this.props.team;
+    let standings = this.getTeamStandings();
     return(
       <React.Fragment>
         <img style={{height:75}} src={team && "https://www.mlbstatic.com/team-logos/" + team.id + ".svg"} />
@@ -16,6 +16,20 @@ class Team extends Component {
         </span>
       </React.Fragment>
     )
+  }
+
+  getTeamStandings() {
+    let out = []
+    Object.keys(this.props.standings).forEach((leagueId) => {
+        this.props.standings && this.props.standings[leagueId].forEach((division) => {
+          division.teamRecords.forEach((team) => {
+      			if(team &&  this.props.team && team.team.id === this.props.team.id) {
+              out = division
+            }
+          })
+        })
+    })
+    return out
   }
 }
 

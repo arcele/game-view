@@ -6,8 +6,8 @@ const initState = {
 	proGames: []
 }
 const standings = (state = {
-		103: {},
-		104: {},
+		103: [],
+		104: [],
 	}, action) => {
 		switch (action.type) {
 			case SAVE_STANDINGS:
