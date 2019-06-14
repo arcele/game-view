@@ -52,16 +52,9 @@ export const makeStandingsCalls = (dispatch) => {
     )
 }
 
-// this is bad naming, like, all around
-// we should have an init function that chains these
-// requests together
-// schedule -> standings -> odds
-// instead of the weirdly duped logic across the schedule
-// and matchup page, because, it's getting out of control
-
 export const fetchSchedule = (gameDate, oddsResult) => {
   if(!gameDate) gameDate = moment().format('YYYY-MM-DD')
-	const gameYear = moment().format('YYYY')
+	const gameYear = moment(gameDate).format('YYYY')
 	return dispatch => {
     makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
       makeStandingsCalls(dispatch).then(() => {
@@ -97,17 +90,18 @@ export const fetchStarterDetails = (starter, dispatch) => {
 	})
 }
 
-export const fetchGame = (game) => {
+export const fetchGame = (id) => {
   return dispatch => {
-		const id = game['gamePk']
 		const probableApi = `https://statsapi.mlb.com/api/v1.1/game/${id}/feed/live?language=en&timecode=`
 		fetch(probableApi).then((res) => {
 			return res.json()
 		}).then((probableData) => {
-      const starters = probableData.gameData.probablePitchers
+      const starters = probableData.gameData.probablePitchers,
+        homeTeamId = probableData.gameData.teams.home.id,
+        awayTeamId = probableData.gameData.teams.away.id
 			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, starters })
-			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${game.awayTeam.id}&year=2018`
-			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${game.homeTeam.id}&year=2018`
+			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${awayTeamId}&year=2018`
+			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${homeTeamId}&year=2018`
 			fetch(homePitcherApi).then((res) => {
 				return res.json()
 			}).then((homeData) => {
@@ -149,3 +143,7 @@ export const makeBettingOddsCall = (dispatch) => {
   })
 
   }
+
+export const getScheduleDate = (props) => {
+  return props && props.match && props.match.params && props.match.params.date || moment().format('YYYY-MM-DD')
+}

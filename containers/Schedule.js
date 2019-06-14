@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, withRouter } from 'react-router-dom'
-import { fetchSchedule, loadSchedule } from '../actions/main'
+import { fetchSchedule, loadSchedule, getScheduleDate } from '../actions/main'
 import Nav from '../components/Nav'
 import PropTypes from 'prop-types'
 import Odds from '../components/Odds'
@@ -20,15 +20,18 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 class Schedule extends Component {
 	componentDidMount() {
-		this.checkScheduleStatus()
+		let scheduleDate = getScheduleDate(this.props)
+		console.log('scheduleDate:', scheduleDate)
+		this.checkScheduleStatus(scheduleDate)
 	}
 
 	componentDidUpdate() {
-		this.checkScheduleStatus()
+		let scheduleDate = getScheduleDate(this.props)
+		console.log('scheduleDate:', scheduleDate)
+		this.checkScheduleStatus(scheduleDate)
 	}
 
-	checkScheduleStatus() {
-		let scheduleDate = this.props.match && this.props.match.params && this.props.match.params.date || moment().format('YYYY-MM-DD')
+	checkScheduleStatus(scheduleDate) {
 		if(!this.props.schedule[scheduleDate]) {
 			this.props.dispatch(fetchSchedule(scheduleDate, this.props.schedule.oddsResult))
 		} else if(scheduleDate != this.props.schedule.scheduleDate) {

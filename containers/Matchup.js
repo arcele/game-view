@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import Pitcher from '../components/Pitcher'
 import Batters from '../components/Batters'
-import { fetchGame, makeScheduleCall, makeBettingOddsCall } from '../actions/main'
+import { fetchGame, fetchSchedule } from '../actions/main'
 import { LOAD_GAME } from '../types/main'
 import Nav from '../components/Nav'
 import Odds from '../components/Odds'
@@ -20,29 +20,37 @@ import TableRow from '@material-ui/core/TableRow';
 class Matchup extends Component {
 
 	componentDidMount() {
-		// make sure we have the schedule
+		this.fetchData()
+	}
+
+	fetchData() {
+		// TODO, we're requesting some of these APIs multiple times, we should be cleaner
+		// about how we determine if we have and if we have already requested some data
 		const { dispatch, match, schedule } = this.props
 		const scheduleDate = schedule && schedule.scheduleDate
-		new Promise((resolve) => {
-			if(schedule && scheduleDate && schedule[scheduleDate] && schedule[scheduleDate].length > 0) {
-				// We have the proGames on the state, continue on
-				console.log('no need to fetch schedule.')
-				resolve()
-			} else {
-				// fetch the proGames, resolve once we've got 'em'
-				const gameDate = match.params.date,
-				 			gameYear = moment(match.params.date).format('YYYY')
-				// this is mostly just duping the fetchSchedule() call but i have to dispatch this, so, yeah, whatever
-				makeScheduleCall(gameDate, gameYear, dispatch).then(() => {
-					makeBettingOddsCall(dispatch).then(() => {
-						resolve()
-					});
-				});
-			}
-		}).then(() => {
-			dispatch({ type: LOAD_GAME, gameId: match.params.id })
-			dispatch(fetchGame(this.props.schedule.game))
-		})
+		// make sure we have the schedule
+		if(schedule && scheduleDate && schedule[scheduleDate] && schedule[scheduleDate].length > 0) {
+			// We have the proGames on the state, load the game from this schedule
+			if(!schedule.game || schedule.game.gamePk != match.params.id) {
+				console.log('just fetch the game.')
+				this.loadGame(match.params.id);
+			}// if we're here we've got all of our data for this view
+		} else {
+			// we can't do anything without the schedule, so let's get it
+			console.log('gotta fetch the schedule')
+			const gameDate = match.params.date,
+			 			gameYear = moment(match.params.date).format('YYYY')
+			dispatch(fetchSchedule(scheduleDate, schedule.oddsResult))
+		}
+	}
+
+	loadGame(gameId) {
+		this.props.dispatch({ type: LOAD_GAME, gameId: gameId })
+		this.props.dispatch(fetchGame(gameId))
+	}
+
+	componentWillUpdate() {
+		this.fetchData();
 	}
 
 	render() {
