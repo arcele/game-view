@@ -19,3 +19,16 @@
   font-size:10px;
   margin-left:4px;
 }
+
+table.standings tr {
+  height:15px
+}
+table.standings tr td {
+  padding: 4px 10px;
+  font-size:8pt;
+}
+table.standings tr.thisTeam td {
+  font-weight: 800;
+  font-size:9pt;
+  padding:3px 10px;
+}
