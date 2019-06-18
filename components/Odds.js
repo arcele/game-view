@@ -17,20 +17,22 @@ class Odds extends Component {
           color: 'rgba(0, 0, 0, 0.87)',
           fontSize: theme.typography.pxToRem(12),
           border: '1px solid #c0c0c0',
+          width: 125,
         },
       }))(Tooltip);
 
       return(
         <HtmlTooltip
+          interactive
           title={
             <Grid container spacing={1}>
               {this.props.odds && this.props.odds.sites && this.props.odds.sites.map((site) => {
                 return(
                   <React.Fragment key={site.site_key}>
-                    <Grid item xs={4}>
+                    <Grid item xs={8} style={{textAlign: 'right'}}>
                       {site.site_key}
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={4}>
                       <span className="odds" data-euro-rounded={Math.round(site.odds.eur)}>
                         {site.odds[format]}
                       </span>
