@@ -3,6 +3,9 @@
   font-weight:200;
   font-size:12px;
 }
+.team .odds {
+  margin-left: 30%;
+}
 .odds[data-euro-rounded="1"] {
   color: #5cf442;
   font-weight: 800

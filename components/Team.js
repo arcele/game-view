@@ -19,21 +19,13 @@ class Team extends Component {
 
     return(
       <React.Fragment>
-        <Grid container spacing={1}>
+        <Grid className="team" container spacing={1}>
           <Grid item xs={3}>
-            <img className="teamLogo" style={{height:75}} src={team && "https://www.mlbstatic.com/team-logos/" + team.id + ".svg"} />
+            <img className="teamLogo" style={{height:75, marginTop:20}} src={team && "https://www.mlbstatic.com/team-logos/" + team.id + ".svg"} />
             <Odds odds={team && team.odds} format='us' />
           </Grid>
           <Grid item xs={9}>
             <Table className="standings">
-              <TableHead>
-                <TableRow>
-                  <TableCell>&nbsp;</TableCell>
-                  <TableCell>Rec</TableCell>
-                  <TableCell>L10</TableCell>
-                  <TableCell>Str</TableCell>
-                </TableRow>
-              </TableHead>
               <TableBody>
               { standings && standings.teamRecords && standings.teamRecords.map((sTeam) => {
                   rowClass = (team.id === sTeam.team.id) ? 'thisTeam' : 'team'
