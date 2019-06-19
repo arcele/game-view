@@ -20,13 +20,20 @@
   margin-left:4px;
 }
 
+.teamLogo{
+  width:100%
+}
+
 table.standings tr {
   height:15px
 }
-table.standings tr td {
+table.standings tr td,
+table.standings tr th {
   padding: 4px 10px;
   font-size:8pt;
 }
+
+
 table.standings tr.thisTeam td {
   font-weight: 800;
   font-size:9pt;
