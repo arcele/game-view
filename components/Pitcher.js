@@ -4,7 +4,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-
+import Player from './Player'
 
 class Pitcher extends Component {
 	render() {
@@ -15,7 +15,7 @@ class Pitcher extends Component {
 			<Table size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell colSpan={4}>{ pitcher && pitcher.fullName }</TableCell>
+						<TableCell colSpan={4}><Player player={pitcher} /></TableCell>
 					</TableRow>
 					<TableRow>
 						<TableCell>W-L</TableCell>

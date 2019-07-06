@@ -66,24 +66,30 @@ const schedule = (state = {
 			})
 		case SAVE_PROBABLE_STARTERS:
 			// Save the probable starters to the original game element
-			game.starters = action.starters
+			let players = action.game && action.game.gameData && action.game.gameData.players
+			let probables = action.game && action.game.gameData && action.game.gameData.probablePitchers
+			game.awayTeam.starter = players && players["ID" + (probables && probables.away && probables.away.id)]
+			game.homeTeam.starter = players && players["ID" + (probables && probables.home && probables.home.id)]
 			return Object.assign({}, state, {
 				game
 			})
 		case SAVE_PITCHER_DETAILS:
 			// Save details about the pitcher fetched from the espn api onto the starters object
-			let starters = Object.assign({}, game.starters, {})
-			if(game.starters.home.id === action.pitcher) {
-				starters.home = Object.assign({}, game.starters.home, {
+			let homeTeam = Object.assign({}, game.homeTeam),
+					awayTeam = Object.assign({}, game.awayTeam)
+
+			if(homeTeam.starter.id === action.pitcher) {
+				homeTeam.starter = Object.assign({}, homeTeam.starter, {
 					data: action.data.row
 				})
+				game.homeTeam = homeTeam
 			}
-			if(game.starters.away.id === action.pitcher) {
-				starters.away = Object.assign({}, game.starters.away, {
+			if(awayTeam.starter.id === action.pitcher) {
+				awayTeam.starter = Object.assign({}, awayTeam.starter, {
 					data: action.data.row
 				})
+				game.awayTeam = awayTeam
 			}
-			game.starters = starters
 			return Object.assign({}, state, {
 				game
 			})
