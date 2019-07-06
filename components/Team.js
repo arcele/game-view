@@ -32,7 +32,7 @@ class Team extends Component {
                   splitRecords = sTeam.records.splitRecords
                   lastTen = _.find(splitRecords, {type: "lastTen"})
                   return(
-                    <TableRow className={rowClass}>
+                    <TableRow className={rowClass} key={'tm' + sTeam.team.id}>
                       <TableCell>
                         {sTeam.team.name}
                       </TableCell>
