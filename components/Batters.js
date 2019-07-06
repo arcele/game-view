@@ -4,6 +4,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Player from './Player'
 
 class Batters extends Component {
 	render() {
@@ -28,7 +29,7 @@ class Batters extends Component {
 						)}
 						{ players.map((player) =>
 							(<TableRow key={player.player_id}>
-								<TableCell>{player.name.split(',')[1].charAt(1)}. {player.name.split(',')[0]}</TableCell>
+								<TableCell><Player player={player} /></TableCell>
 								<TableCell>{player.b_total_hits} / { player.b_ab}</TableCell>
 								<TableCell>{player.b_batting_avg}</TableCell>
 								<TableCell>{player.b_home_run}</TableCell>
