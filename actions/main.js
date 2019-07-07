@@ -57,14 +57,27 @@ export const makeStandingsCalls = (dispatch) => {
 
 export const makeTeamScheduleCall = (dispatch, teamId) => {
   let endDate = moment().add(-1, 'd').format('YYYY-MM-DD'),
-      startDate = moment().add(-1, 'M').format('YYYY-MM-DD'),
-      teamScheduleApi = 'http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&teamId={teamId}&season=2019&startDate=' + startDate + '&endDate=' + endDate;
+      startDate = moment().add(-10, 'd').format('YYYY-MM-DD'),
+      teamScheduleApi = 'http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&teamId={teamId}&season=2019&startDate=' + startDate + '&endDate=' + endDate,
+      boxScoreApi = 'http://statsapi.mlb.com/api/v1/game/{gameId}/boxscore';
   return new Promise((res) => {
     fetch(teamScheduleApi.replace('{teamId}', teamId)).then((resp) => {
       return resp.json()
     }).then((schedule) => {
       dispatch({type: 'SAVE_TEAM_SCHEDULE', teamId, schedule})
-      res(schedule)
+      schedule.dates.map((day) => {
+        day.games.map((game) => {
+          // just doing these all asyc because we're not waiting on anything
+          // need to find a way to check the existing state for boxscores so that we're not requesting them again
+          // if we've fetched them for another team
+          fetch(boxScoreApi.replace('{gameId}', game.gamePk)).then((resp) => {
+            return resp.json()
+          }).then((boxScore) => {
+            dispatch({type: 'SAVE_BOX_SCORE', gameId: game.gamePk, boxScore})
+          })
+        })
+      })
+      res(schedule); // this will resolve before the box scores are downloaded
     })
   })
 }

@@ -192,6 +192,19 @@ const teams = (state = {
 		}
 }
 
+const boxscores = (state = {
+	// all boxscores indexed by game id
+}, action) => {
+	let boxscores = Object.assign({}, state)
+	switch(action.type) {
+		case 'SAVE_BOX_SCORE':
+				boxscores[action.gameId] = action.boxScore
+				return boxscores
+		default:
+			return state
+	}
+}
+
 const averageOdds = (odds) => {
 	let euroOdds = [
 		(odds.reduce((a,b) => {
@@ -240,6 +253,7 @@ const reducer = combineReducers({
 	schedule,
 	standings,
 	teams,
+	boxscores,
 })
 
 //const reducer = schedule
