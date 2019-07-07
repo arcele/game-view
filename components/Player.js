@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { makeTeamScheduleCall } from '../actions/main'
 
 class Player extends Component {
   render() {
@@ -46,6 +47,7 @@ class Player extends Component {
     })
     if(!this.props.teams.hasOwnProperty(this.props.team.id)) {
       this.props.dispatch({ type: 'INIT_TEAM', id: this.props.team.id })
+      makeTeamScheduleCall(this.props.dispatch, this.props.team.id)
     }
   }
 }

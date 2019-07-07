@@ -178,12 +178,15 @@ const schedule = (state = {
 const teams = (state = {
 	// all teams indexed by team id
 	}, action) => {
+		let teams = Object.assign({}, state)
 		switch(action.type) {
 			case 'INIT_TEAM':
-				let teams = Object.assign({}, state)
 				teams[action.id] = {
 					requested: true
 				}
+				return teams
+			case 'SAVE_TEAM_SCHEDULE':
+				teams[action.teamId] = action.schedule
 				return teams
 			default:
 				return state

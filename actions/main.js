@@ -52,6 +52,18 @@ export const makeStandingsCalls = (dispatch) => {
     )
 }
 
+export const makeTeamScheduleCall = (dispatch, teamId) => {
+  let teamScheduleApi = 'http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&teamId={teamId}&season=2019&startDate=2019-06-06&endDate=2019-07-06'
+  return new Promise((res) => {
+    fetch(teamScheduleApi.replace('{teamId}', teamId)).then((resp) => {
+      return resp.json()
+    }).then((schedule) => {
+      dispatch({type: 'SAVE_TEAM_SCHEDULE', teamId, schedule})
+      res(schedule)
+    })
+  })
+}
+
 export const fetchSchedule = (gameDate, oddsResult) => {
   if(!gameDate) gameDate = moment().format('YYYY-MM-DD')
 	const gameYear = moment(gameDate).format('YYYY')
