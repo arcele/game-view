@@ -72,18 +72,18 @@ class Matchup extends Component {
 					<TableBody>
 						<TableRow>
 							<TableCell>
-								<Pitcher team={game && game.awayTeam && game.awayTeam.abbrev} pitcher={game && game.awayTeam && game.awayTeam.starter } />
+								<Pitcher team={game && game.awayTeam} pitcher={game && game.awayTeam && game.awayTeam.starter } />
 							</TableCell>
 							<TableCell>
-								<Pitcher team={game && game.homeTeam && game.homeTeam.abbrev} pitcher={game && game.homeTeam && game.homeTeam.starter } />
+								<Pitcher team={game && game.homeTeam} pitcher={game && game.homeTeam && game.homeTeam.starter } />
 							</TableCell>
 						</TableRow>
 						<TableRow>
 							<TableCell style={{verticalAlign:'top'}}>
-								<Batters team={game && game.homeTeam && game.homeTeam.short} players={game && game['away_pitcher_bvp']} />
+								<Batters team={game && game.homeTeam} players={game && game['away_pitcher_bvp']} />
 							</TableCell>
 							<TableCell style={{verticalAlign:'top'}}>
-								<Batters team={game && game.awayTeam && game.awayTeam.short} players={game && game['home_pitcher_bvp']} />
+								<Batters team={game && game.awayTeam} players={game && game['home_pitcher_bvp']} />
 							</TableCell>
 						</TableRow>
 					</TableBody>

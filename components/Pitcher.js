@@ -15,7 +15,7 @@ class Pitcher extends Component {
 			<Table size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell colSpan={4}><Player player={pitcher} /></TableCell>
+						<TableCell colSpan={4}><Player player={pitcher} team={team} /></TableCell>
 					</TableRow>
 					<TableRow>
 						<TableCell>W-L</TableCell>

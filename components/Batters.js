@@ -14,7 +14,7 @@ class Batters extends Component {
 				<Table size="small">
 					<TableHead>
 						<TableRow>
-							<TableCell>{this.props.team} Batters</TableCell>
+							<TableCell>{this.props.team && this.props.team.full && this.props.team.full.split(' ')[0]} Batters</TableCell>
 							<TableCell>H/AB</TableCell>
 							<TableCell>AVG</TableCell>
 							<TableCell>HR</TableCell>
@@ -29,7 +29,7 @@ class Batters extends Component {
 						)}
 						{ players.map((player) =>
 							(<TableRow key={player.player_id}>
-								<TableCell><Player player={player} /></TableCell>
+								<TableCell><Player player={player} team={this.props.team} /></TableCell>
 								<TableCell>{player.b_total_hits} / { player.b_ab}</TableCell>
 								<TableCell>{player.b_batting_avg}</TableCell>
 								<TableCell>{player.b_home_run}</TableCell>
