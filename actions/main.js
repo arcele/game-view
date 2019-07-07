@@ -1,8 +1,11 @@
 import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS, LOAD_ODDS_FROM_STATE, LOAD_ODDS_FROM_LOCAL_STORAGE, SAVE_BETTING_ODDS, SAVE_STANDINGS } from '../types/main'
+import CONSTANT_TEAMS from '../constants/teams'
 import moment from 'moment'
+import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 //apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
 import apiKey from '../config/apiKey'
+
 
 export const savePlayer = (player) => {
   return dispatch => {
@@ -160,4 +163,9 @@ export const makeBettingOddsCall = (dispatch) => {
 
 export const getScheduleDate = (props) => {
   return props && props.match && props.match.params && props.match.params.date || moment().format('YYYY-MM-DD')
+}
+
+export const getTeam = (teamId) => {
+  // gets a team's constant data
+  return _.find(CONSTANT_TEAMS.teams, {id: teamId})
 }

@@ -11,14 +11,14 @@ import TableRow from '@material-ui/core/TableRow';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import moment from 'moment'
 
-import { makeTeamScheduleCall } from '../actions/main'
+import { makeTeamScheduleCall, getTeam } from '../actions/main'
 
 class Player extends Component {
   render() {
     let player = this.props && this.props.player,
         playerName = player && player.name || player && player.lastFirstName, // different apis have different player names
         team = this.props.team && this.props.teams[this.props.team.id],
-        teamDates = team && team.dates && team.dates.reverse();
+        teamDates = team && team.dates && team.dates.slice(0).reverse();
 
     const HtmlTooltip = withStyles(theme => ({
       tooltip: {
@@ -46,7 +46,7 @@ class Player extends Component {
                   <TableHead>
                     <TableRow>
                       <TableCell>Date</TableCell>
-                      <TableCell>Result</TableCell>
+                      <TableCell style={{textAlign:'right'}}>Opp</TableCell>
                       <TableCell>H/AB</TableCell>
                       <TableCell>HR</TableCell>
                       <TableCell>RBI</TableCell>
@@ -59,7 +59,7 @@ class Player extends Component {
                           (
                             <TableRow key={day.date}>
                               <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
-                              <TableCell>{this.formatGameStatus(game)}</TableCell>
+                              <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
                               <TableCell>-/-</TableCell>
                               <TableCell>-</TableCell>
                               <TableCell>-</TableCell>
@@ -93,12 +93,13 @@ class Player extends Component {
     }
   }
 
-  formatGameStatus(game) {
-    console.log('game:',game)
-    if(game.teams.away.team.id === this.props.team.id) {
-      return(<span>@</span>)
+  formatOpp(game) {
+    let homeTeam = getTeam(game.teams.home.team.id),
+        awayTeam = getTeam(game.teams.away.team.id)
+    if(awayTeam.id === this.props.team.id) {
+      return(<span>@ { homeTeam.abbreviation }</span>)
     } else {
-      return(<span>vs</span>)
+      return(<span>{ awayTeam.abbreviation }</span>)
     }
   }
 }
