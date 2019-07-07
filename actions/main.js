@@ -26,7 +26,8 @@ export const makeScheduleCall = (gameDate, season, dispatch) => {
       return resp.json()
     }).then((resJson) => {
       if(dispatch) {
-        dispatch({type: SAVE_SCHEDULE, games: resJson.dates[0].games, date: gameDate})
+        let games = resJson.dates[0] && resJson.dates[0].games || []
+        dispatch({type: SAVE_SCHEDULE, games, date: gameDate})
       }
       resolve(resJson)
     })
