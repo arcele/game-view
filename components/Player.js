@@ -24,7 +24,7 @@ class Player extends Component {
     return(
       <HtmlTooltip
         interactive
-        onOpen={this.getSchedule.bind(this)}
+        onOpen={this.loadPlayer.bind(this)}
         title={
           <React.Fragment>
             <span>{this.props.statePlayer.firstLastName}</span>
@@ -38,19 +38,23 @@ class Player extends Component {
     )
   }
 
-  getSchedule() {
+  loadPlayer() {
     this.props.dispatch({
       type: 'LOAD_PLAYER',
-      id: this.props.player.id || parseInt(this.props.player['player_id'])
+      id: this.props.player.id || parseInt(this.props.player['player_id']),
+      team: this.props.team,
     })
+    if(!this.props.teams.hasOwnProperty(this.props.team.id)) {
+      this.props.dispatch({ type: 'INIT_TEAM', id: this.props.team.id })
+    }
   }
-
 }
 
 const mapStateToProps = (state) => {
 	return {
     statePlayer: state.gameView.schedule.player,
 		standings: state.gameView.standings,
+    teams: state.gameView.teams,
 	}
 }
 

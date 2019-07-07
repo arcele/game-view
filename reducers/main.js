@@ -167,7 +167,6 @@ const schedule = (state = {
 				return ret
 
 		case 'LOAD_PLAYER':
-			console.log("yes, we should:", state, action)
 			// assumes that the player we're loading is in the game we have loaded, seems legit
 			return Object.assign({}, state, {
 				player: state.game.players["ID" + action.id]
@@ -180,6 +179,12 @@ const teams = (state = {
 	// all teams indexed by team id
 	}, action) => {
 		switch(action.type) {
+			case 'INIT_TEAM':
+				let teams = Object.assign({}, state)
+				teams[action.id] = {
+					requested: true
+				}
+				return teams
 			default:
 				return state
 		}
