@@ -101,8 +101,7 @@ const schedule = (state = {
 			let data = action.data.team_bvp_5y.queryResults.row
 				.filter((row) => { if(row.b_tpa) { return row } }) // only results with plate appearances
 				.sort((x,y) => { return (y.b_tpa - x.b_tpa) })     // sort by plate app. decending
-
-			game[(game.starters && game.starters.home.id === action.pitcher) ? 'home_pitcher_bvp' : 'away_pitcher_bvp'] = data
+			game[(game.homeTeam && game.homeTeam.starter.id === action.pitcher) ? 'home_pitcher_bvp' : 'away_pitcher_bvp'] = data
 			game.bvpDataLoaded = true;
 			return Object.assign({}, state, {
 				game
