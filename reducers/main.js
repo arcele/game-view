@@ -23,6 +23,7 @@ const schedule = (state = {
 		proGames: [],		// list of (soon to be) distinct progames for the day
 		game: undefined,	// the currently in view game
 		requestedGames: false,
+		player: {},
 	}, action) => {
 	let proGames;
 
@@ -66,10 +67,12 @@ const schedule = (state = {
 			})
 		case SAVE_PROBABLE_STARTERS:
 			// Save the probable starters to the original game element
+			// also save all of the rad player data we get from this feed
 			let players = action.game && action.game.gameData && action.game.gameData.players
 			let probables = action.game && action.game.gameData && action.game.gameData.probablePitchers
 			game.awayTeam.starter = players && players["ID" + (probables && probables.away && probables.away.id)]
 			game.homeTeam.starter = players && players["ID" + (probables && probables.home && probables.home.id)]
+			game.players = players
 			return Object.assign({}, state, {
 				game
 			})
@@ -163,10 +166,23 @@ const schedule = (state = {
 				}
 				return ret
 
-
+		case 'LOAD_PLAYER':
+			console.log("yes, we should:", state, action)
+			// assumes that the player we're loading is in the game we have loaded, seems legit
+			return Object.assign({}, state, {
+				player: state.game.players["ID" + action.id]
+			})
 		default:
 			return state
 	}
+}
+const teams = (state = {
+	// all teams indexed by team id
+	}, action) => {
+		switch(action.type) {
+			default:
+				return state
+		}
 }
 
 const averageOdds = (odds) => {
@@ -216,6 +232,7 @@ const euroOddToUsOdd = (euroOdd) => {
 const reducer = combineReducers({
 	schedule,
 	standings,
+	teams,
 })
 
 //const reducer = schedule
