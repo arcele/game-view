@@ -50,22 +50,26 @@ class Player extends Component {
                       <TableCell>H/AB</TableCell>
                       <TableCell>HR</TableCell>
                       <TableCell>RBI</TableCell>
-                      <TableCell>OPS</TableCell>
+                      <TableCell>Bases</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                   { teamDates.map((day) => (
-                      day && day.games.map((game) =>
-                          (
+                      day && day.games.map((game) => {
+                          let boxScore = this.props.boxscores[game.gamePk],
+                              stats = boxScore && (boxScore.teams.away.players["ID" + this.props.statePlayer.id] || boxScore.teams.home.players["ID" + this.props.statePlayer.id]),
+                              battingStats = stats && stats.stats && stats.stats.batting;
+                          return(
                             <TableRow key={day.date}>
                               <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
                               <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
-                              <TableCell>-/-</TableCell>
-                              <TableCell>-</TableCell>
-                              <TableCell>-</TableCell>
-                              <TableCell>-</TableCell>
+                              <TableCell>{ battingStats && battingStats.atBats && (battingStats.hits +'/'+battingStats.atBats) || '-' }</TableCell>
+                              <TableCell>{ battingStats && battingStats.homeRuns }</TableCell>
+                              <TableCell>{ battingStats && battingStats.rbi }</TableCell>
+                              <TableCell>{ battingStats && battingStats.totalBases }</TableCell>
                             </TableRow>
                           )
+                        }
                       )
                   )) }
                   </TableBody>
@@ -82,14 +86,18 @@ class Player extends Component {
   }
 
   loadPlayer() {
-    this.props.dispatch({
-      type: 'LOAD_PLAYER',
-      id: this.props.player.id || parseInt(this.props.player['player_id']),
-      team: this.props.team,
-    })
-    if(!this.props.teams.hasOwnProperty(this.props.team.id)) {
-      this.props.dispatch({ type: 'INIT_TEAM', id: this.props.team.id })
-      makeTeamScheduleCall(this.props.dispatch, this.props.team.id)
+    let loadedPlayer = this.props.schedule && this.props.schedule.player
+    if(!loadedPlayer.id || (loadedPlayer.id != this.props.player.id && loadedPlayer.id != parseInt(this.props.player['player_id']))) {
+      // Load the player if he's not already loaded
+      this.props.dispatch({
+        type: 'LOAD_PLAYER',
+        id: this.props.player.id || parseInt(this.props.player['player_id']),
+        team: this.props.team,
+      })
+      if(!this.props.teams.hasOwnProperty(this.props.team.id)) {
+        this.props.dispatch({ type: 'INIT_TEAM', id: this.props.team.id })
+        makeTeamScheduleCall(this.props.dispatch, this.props.team.id)
+      }
     }
   }
 
@@ -106,9 +114,11 @@ class Player extends Component {
 
 const mapStateToProps = (state) => {
 	return {
+    schedule: state.gameView.schedule,
     statePlayer: state.gameView.schedule.player,
 		standings: state.gameView.standings,
     teams: state.gameView.teams,
+    boxscores: state.gameView.boxscores,
 	}
 }
 
