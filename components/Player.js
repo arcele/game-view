@@ -45,12 +45,27 @@ class Player extends Component {
                 <Table className="standings">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Date</TableCell>
                       <TableCell style={{textAlign:'right'}}>Opp</TableCell>
-                      <TableCell>H/AB</TableCell>
-                      <TableCell>HR</TableCell>
-                      <TableCell>RBI</TableCell>
-                      <TableCell>Bases</TableCell>
+                      <TableCell>Date</TableCell>
+                      {player && player.primaryPosition && player.primaryPosition.code == "1" &&
+                        (
+                          <React.Fragment>
+                            <TableCell>Res</TableCell>
+                            <TableCell>IP</TableCell>
+                            <TableCell>ER</TableCell>
+                            <TableCell>K</TableCell>
+                          </React.Fragment>
+                        )
+                      } {player && player.primaryPosition && player.primaryPosition.code != "1" &&
+                        (
+                          <React.Fragment>
+                            <TableCell>H/AB</TableCell>
+                            <TableCell>HR</TableCell>
+                            <TableCell>RBI</TableCell>
+                            <TableCell>Bases</TableCell>
+                          </React.Fragment>
+                        )
+                      }
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -58,17 +73,31 @@ class Player extends Component {
                       day && day.games.map((game) => {
                           let boxScore = this.props.boxscores[game.gamePk],
                               stats = boxScore && (boxScore.teams.away.players["ID" + this.props.statePlayer.id] || boxScore.teams.home.players["ID" + this.props.statePlayer.id]),
-                              battingStats = stats && stats.stats && stats.stats.batting;
-                          return(
-                            <TableRow key={day.date}>
-                              <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
-                              <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
-                              <TableCell>{ battingStats && battingStats.atBats && (battingStats.hits +'/'+battingStats.atBats) || '-' }</TableCell>
-                              <TableCell>{ battingStats && battingStats.homeRuns }</TableCell>
-                              <TableCell>{ battingStats && battingStats.rbi }</TableCell>
-                              <TableCell>{ battingStats && battingStats.totalBases }</TableCell>
-                            </TableRow>
-                          )
+                              battingStats = stats && stats.stats && stats.stats.batting,
+                              pitchingStats = stats && stats.stats && stats.stats.pitching;
+                              if(player && player.primaryPosition && player.primaryPosition.code == "1") { // Pitcher
+                                return(
+                                  <TableRow key={day.date}>
+                                    <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
+                                    <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
+                                    <TableCell>{ pitchingStats && pitchingStats.note }</TableCell>
+                                    <TableCell>{ pitchingStats && pitchingStats.inningsPitched }</TableCell>
+                                    <TableCell>{ pitchingStats && pitchingStats.earnedRuns }</TableCell>
+                                    <TableCell>{ pitchingStats && pitchingStats.strikeOuts }</TableCell>
+                                  </TableRow>
+                                )
+                              } else {
+                                return(
+                                  <TableRow key={day.date}>
+                                    <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
+                                    <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
+                                    <TableCell>{ battingStats && battingStats.atBats && (battingStats.hits +'/'+battingStats.atBats) || '-' }</TableCell>
+                                    <TableCell>{ battingStats && battingStats.homeRuns }</TableCell>
+                                    <TableCell>{ battingStats && battingStats.rbi }</TableCell>
+                                    <TableCell>{ battingStats && battingStats.totalBases }</TableCell>
+                                  </TableRow>
+                                )
+                              }
                         }
                       )
                   )) }
