@@ -15,10 +15,13 @@ import { makeTeamScheduleCall, getTeam } from '../actions/main'
 
 class Player extends Component {
   render() {
-    let player = this.props && this.props.player,
+    let player     = this.props && this.props.player,
         playerName = player && player.name || player && player.lastFirstName, // different apis have different player names
-        team = this.props.team && this.props.teams[this.props.team.id],
-        teamDates = team && team.dates && team.dates.slice(0).reverse();
+        team       = this.props.team && this.props.teams[this.props.team.id],
+        teamDates  = team && team.dates && team.dates.slice(0).reverse(),
+        isActive   = this.props.schedule && this.props.schedule.player && player && this.getPlayerId() && this.props.schedule.player.id == this.getPlayerId(),
+        gamesLog   = isActive && this.getGamesLog(),
+        isLoaded   = (teamDates && player && gamesLog && gamesLog.length >= teamDates.length);
 
     const HtmlTooltip = withStyles(theme => ({
       tooltip: {
@@ -39,12 +42,12 @@ class Player extends Component {
         title={
           <React.Fragment>
             <div>{this.props.statePlayer.firstLastName}</div>
-            { !team && <LinearProgress style={{marginTop:25}}/> }
-            { teamDates &&
+            { !isLoaded && <LinearProgress style={{marginTop:25}}/> }
+            { isLoaded &&
               <React.Fragment>
                 <Table className="standings">
                   <TableHead>
-                    <TableRow>
+                    <TableRow key="standings-header">
                       <TableCell style={{textAlign:'right'}}>Opp</TableCell>
                       <TableCell>Date</TableCell>
                       {player && player.primaryPosition && player.primaryPosition.code == "1" &&
@@ -69,38 +72,38 @@ class Player extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                  { teamDates.map((day) => (
-                      day && day.games.map((game) => {
-                          let boxScore = this.props.boxscores[game.gamePk],
-                              stats = boxScore && (boxScore.teams.away.players["ID" + this.props.statePlayer.id] || boxScore.teams.home.players["ID" + this.props.statePlayer.id]),
-                              battingStats = stats && stats.stats && stats.stats.batting,
-                              pitchingStats = stats && stats.stats && stats.stats.pitching;
-                              if(player && player.primaryPosition && player.primaryPosition.code == "1") { // Pitcher
-                                return(
-                                  <TableRow key={day.date}>
-                                    <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
-                                    <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
-                                    <TableCell>{ pitchingStats && pitchingStats.note }</TableCell>
-                                    <TableCell>{ pitchingStats && pitchingStats.inningsPitched }</TableCell>
-                                    <TableCell>{ pitchingStats && pitchingStats.earnedRuns }</TableCell>
-                                    <TableCell>{ pitchingStats && pitchingStats.strikeOuts }</TableCell>
-                                  </TableRow>
-                                )
-                              } else {
-                                return(
-                                  <TableRow key={day.date}>
-                                    <TableCell>{moment(day.date).format('MM-DD')}</TableCell>
-                                    <TableCell style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
-                                    <TableCell>{ battingStats && battingStats.atBats && (battingStats.hits +'/'+battingStats.atBats) || '-' }</TableCell>
-                                    <TableCell>{ battingStats && battingStats.homeRuns }</TableCell>
-                                    <TableCell>{ battingStats && battingStats.rbi }</TableCell>
-                                    <TableCell>{ battingStats && battingStats.totalBases }</TableCell>
-                                  </TableRow>
-                                )
-                              }
-                        }
-                      )
-                  )) }
+                  { gamesLog && gamesLog.map((gameLog) => {
+                      let game     = gameLog.game,
+                          day      = gameLog.day,
+                          boxScore = this.props.boxscores[game.gamePk],
+                          stats    = boxScore && (boxScore.teams.away.players["ID" + this.props.statePlayer.id] || boxScore.teams.home.players["ID" + this.props.statePlayer.id]),
+                          battingStats = stats && stats.stats && stats.stats.batting,
+                          pitchingStats = stats && stats.stats && stats.stats.pitching;
+                          if(player && player.primaryPosition && player.primaryPosition.code == "1") { // Pitcher
+                            return(
+                              <TableRow key={game.id}>
+                                <TableCell key={game.id + 'date'}>{moment(day.date).format('MM-DD')}</TableCell>
+                                <TableCell key={game.id + 'opp'} style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
+                                <TableCell key={game.id + 'note'}>{ pitchingStats && pitchingStats.note }</TableCell>
+                                <TableCell key={game.id + 'ip'}>{ pitchingStats && pitchingStats.inningsPitched }</TableCell>
+                                <TableCell key={game.id + 'er'}>{ pitchingStats && pitchingStats.earnedRuns }</TableCell>
+                                <TableCell key={game.id + 'k'}>{ pitchingStats && pitchingStats.strikeOuts }</TableCell>
+                              </TableRow>
+                            )
+                          } else {
+                            return(
+                              <TableRow key={game.id}>
+                                <TableCell key={game.id + 'date'}>{moment(day.date).format('MM-DD')}</TableCell>
+                                <TableCell key={game.id + 'opp'} style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
+                                <TableCell key={game.id + 'hab'}>{ battingStats && battingStats.atBats && (battingStats.hits +'/'+battingStats.atBats) || '-' }</TableCell>
+                                <TableCell key={game.id + 'hr'}>{ battingStats && battingStats.homeRuns }</TableCell>
+                                <TableCell key={game.id + 'rbi'}>{ battingStats && battingStats.rbi }</TableCell>
+                                <TableCell key={game.id + 'tb'}>{ battingStats && battingStats.totalBases }</TableCell>
+                              </TableRow>
+                            )
+                          }
+                      }
+                  ) }
                   </TableBody>
                 </Table>
               </React.Fragment>
@@ -112,6 +115,31 @@ class Player extends Component {
           </span>
       </HtmlTooltip>
     )
+  }
+
+  getGamesLog() {
+    let boxscore,
+        stats = [],
+        gameStats,
+        playerId = this.getPlayerId(),
+        team = this.props.team && this.props.teams[this.props.team.id],
+        teamDates = team && team.dates && team.dates.slice(0).reverse();
+
+    teamDates && teamDates.map((day) => (
+        day && day.games.map((game) => {
+          boxscore  = this.props.boxscores[game.gamePk];
+          gameStats = boxscore && (boxscore.teams.away.players["ID" + playerId]);
+          console.log('gameStats:', gameStats)
+          if(boxscore) {
+            stats.push({ day: day, game: game, stats})
+          }
+        })
+    ))
+    return stats;
+  }
+
+  getPlayerId() {
+    return this.props.player && (this.props.player.id || this.props.player['player_id'])
   }
 
   loadPlayer() {
