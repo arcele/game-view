@@ -48,8 +48,8 @@ class Player extends Component {
                 <Table className="standings">
                   <TableHead>
                     <TableRow key="standings-header">
-                      <TableCell style={{textAlign:'right'}}>Opp</TableCell>
                       <TableCell>Date</TableCell>
+                      <TableCell style={{textAlign:'right'}}>Opp</TableCell>
                       {player && player.primaryPosition && player.primaryPosition.code == "1" &&
                         (
                           <React.Fragment>
@@ -59,7 +59,7 @@ class Player extends Component {
                             <TableCell>K</TableCell>
                           </React.Fragment>
                         )
-                      } {player && player.primaryPosition && player.primaryPosition.code != "1" &&
+                      } {player && !player.primaryPosition &&
                         (
                           <React.Fragment>
                             <TableCell>H/AB</TableCell>
@@ -79,26 +79,37 @@ class Player extends Component {
                           stats    = boxScore && (boxScore.teams.away.players["ID" + this.props.statePlayer.id] || boxScore.teams.home.players["ID" + this.props.statePlayer.id]),
                           battingStats = stats && stats.stats && stats.stats.batting,
                           pitchingStats = stats && stats.stats && stats.stats.pitching;
+
                           if(player && player.primaryPosition && player.primaryPosition.code == "1") { // Pitcher
-                            return(
-                              <TableRow key={game.id}>
-                                <TableCell key={game.id + 'date'}>{moment(day.date).format('MM-DD')}</TableCell>
-                                <TableCell key={game.id + 'opp'} style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
-                                <TableCell key={game.id + 'note'}>{ pitchingStats && pitchingStats.note }</TableCell>
-                                <TableCell key={game.id + 'ip'}>{ pitchingStats && pitchingStats.inningsPitched }</TableCell>
-                                <TableCell key={game.id + 'er'}>{ pitchingStats && pitchingStats.earnedRuns }</TableCell>
-                                <TableCell key={game.id + 'k'}>{ pitchingStats && pitchingStats.strikeOuts }</TableCell>
-                              </TableRow>
-                            )
+                            if(pitchingStats && pitchingStats.inningsPitched) {
+                              return(
+                                <TableRow key={game.id}>
+                                  <TableCell key={game.id + 'date'}>{moment(day.date).format('MM-DD')}</TableCell>
+                                  <TableCell key={game.id + 'opp'} style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
+                                  <TableCell key={game.id + 'note'}>{ pitchingStats && pitchingStats.note }</TableCell>
+                                  <TableCell key={game.id + 'ip'}>{ pitchingStats && pitchingStats.inningsPitched }</TableCell>
+                                  <TableCell key={game.id + 'er'}>{ pitchingStats && pitchingStats.earnedRuns }</TableCell>
+                                  <TableCell key={game.id + 'k'}>{ pitchingStats && pitchingStats.strikeOuts }</TableCell>
+                                </TableRow>
+                              )
+                            }
                           } else {
                             return(
                               <TableRow key={game.id}>
                                 <TableCell key={game.id + 'date'}>{moment(day.date).format('MM-DD')}</TableCell>
                                 <TableCell key={game.id + 'opp'} style={{textAlign:'right'}}>{this.formatOpp(game)}</TableCell>
-                                <TableCell key={game.id + 'hab'}>{ battingStats && battingStats.atBats && (battingStats.hits +'/'+battingStats.atBats) || '-' }</TableCell>
-                                <TableCell key={game.id + 'hr'}>{ battingStats && battingStats.homeRuns }</TableCell>
-                                <TableCell key={game.id + 'rbi'}>{ battingStats && battingStats.rbi }</TableCell>
-                                <TableCell key={game.id + 'tb'}>{ battingStats && battingStats.totalBases }</TableCell>
+                                { battingStats && battingStats.atBats > 0 && (
+                                  <React.Fragment>
+                                    <TableCell key={game.id + 'hab'}>{ battingStats.hits +'/'+battingStats.atBats }</TableCell>
+                                    <TableCell key={game.id + 'hr'}>{ battingStats.homeRuns }</TableCell>
+                                    <TableCell key={game.id + 'rbi'}>{ battingStats.rbi }</TableCell>
+                                    <TableCell key={game.id + 'tb'}>{ battingStats.totalBases }</TableCell>
+                                  </React.Fragment>
+                                ) }
+                                { (!battingStats || !battingStats.atBats || battingStats.atBats == 0) && (
+                                  <TableCell colSpan={4}>&nbsp;</TableCell>
+                                )}
+
                               </TableRow>
                             )
                           }
