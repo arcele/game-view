@@ -16,7 +16,7 @@ class Team extends Component {
         rowClass = '',
         splitRecords,
         lastTen;
-
+console.log('standings:', standings)
     return(
       <React.Fragment>
         <Grid className="team" container spacing={1}>
@@ -43,7 +43,7 @@ class Team extends Component {
                         <span className="record">{lastTen.wins}-{lastTen.losses}</span>
                       </TableCell>
                       <TableCell>
-                        <span className="record">{sTeam.streak.streakCode}</span>
+                        <span className="record">{sTeam.streak && sTeam.streak.streakCode}</span>
                       </TableCell>
                     </TableRow>
                   )
