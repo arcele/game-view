@@ -6,6 +6,7 @@ import fetch from 'isomorphic-fetch'
 //apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
 import apiKey from '../config/apiKey'
 
+const SEASON = '2022'
 
 export const savePlayer = (player) => {
   return dispatch => {
@@ -39,7 +40,8 @@ export const makeStandingsCalls = (dispatch) => {
       103, // American
       104, // National
   ],
-    divisionApi = 'http://statsapi.mlb.com/api/v1/divisions/?seasonId=2021&leagueId={leagueId}',
+
+    divisionApi = 'http://statsapi.mlb.com/api/v1/divisions/?seasonId=2022&leagueId={leagueId}',
     leagueApi = 'http://statsapi.mlb.com/api/v1/standings/?leagueId={leagueId}'
     console.log('doin stuff')
     return Promise.all(
@@ -59,7 +61,7 @@ export const makeStandingsCalls = (dispatch) => {
 export const makeTeamScheduleCall = (dispatch, teamId) => {
   let endDate = moment().add(-1, 'd').format('YYYY-MM-DD'),
       startDate = moment().add(-10, 'd').format('YYYY-MM-DD'),
-      teamScheduleApi = 'http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&teamId={teamId}&season=2021&startDate=' + startDate + '&endDate=' + endDate,
+      teamScheduleApi = 'http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&teamId={teamId}&season=2022&startDate=' + startDate + '&endDate=' + endDate,
       boxScoreApi = 'http://statsapi.mlb.com/api/v1/game/{gameId}/boxscore';
   return new Promise((res) => {
     fetch(teamScheduleApi.replace('{teamId}', teamId)).then((resp) => {
@@ -104,7 +106,7 @@ export const fetchSchedule = (gameDate, oddsResult) => {
 
 export const fetchStarterDetails = (starter, dispatch) => {
 	return new Promise((resolve) => {
-    const playerStatsApi = `http://lookup-service-prod.mlb.com/json/named.sport_pitching_tm.bam?league_list_id=%27mlb%27&game_type=%27R%27&season=%272021%27&player_id=%27${starter.id}%27`
+    const playerStatsApi = `http://lookup-service-prod.mlb.com/json/named.sport_pitching_tm.bam?league_list_id=%27mlb%27&game_type=%27R%27&season=%272022%27&player_id=%27${starter.id}%27`
 
 		fetch(playerStatsApi).then((res) => {
 			return res.json()
@@ -131,8 +133,8 @@ export const fetchGame = (id) => {
         homeTeamId = probableData.gameData.teams.home.id,
         awayTeamId = probableData.gameData.teams.away.id
 			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, game: probableData })
-			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${awayTeamId}&year=2021`
-			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${homeTeamId}&year=2021`
+			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${awayTeamId}&year=2022`
+			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${homeTeamId}&year=2022`
 			fetch(homePitcherApi).then((res) => {
 				return res.json()
 			}).then((homeData) => {
