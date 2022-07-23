@@ -40,6 +40,7 @@ export const makeStandingsCalls = (dispatch) => {
       103, // American
       104, // National
   ],
+
     divisionApi = 'http://statsapi.mlb.com/api/v1/divisions/?seasonId=2022&leagueId={leagueId}',
     leagueApi = 'http://statsapi.mlb.com/api/v1/standings/?leagueId={leagueId}'
     console.log('doin stuff')
