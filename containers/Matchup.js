@@ -80,10 +80,10 @@ class Matchup extends Component {
 						</TableRow>
 						<TableRow>
 							<TableCell style={{verticalAlign:'top'}}>
-								<Batters team={game && game.homeTeam} players={game && game['away_pitcher_bvp']} />
+								<Batters team={game && game.awayTeam} players={game && game.homeTeam && game.homeTeam.players } lineup={game && game.homeTeam && game.homeTeam.lineup} />
 							</TableCell>
 							<TableCell style={{verticalAlign:'top'}}>
-								<Batters team={game && game.awayTeam} players={game && game['home_pitcher_bvp']} />
+								<Batters team={game && game.homeTeam} players={game && game.awayTeam && game.awayTeam.players } lineup={game && game.awayTeam && game.awayTeam.lineup} />
 							</TableCell>
 						</TableRow>
 					</TableBody>

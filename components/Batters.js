@@ -8,37 +8,56 @@ import Player from './Player'
 
 class Batters extends Component {
 	render() {
-		// TODO: Handle case of no Results returned, but not 'loading' any more
 		const players = this.props.players || []
+		const lineup = this.props.lineup || []
+		let batter, batterStats
+
 		return (
 				<Table size="small">
 					<TableHead>
 						<TableRow>
-							<TableCell>{this.props.team && this.props.team.full && this.props.team.full.split(' ')[0]} Batters</TableCell>
-							<TableCell>H/AB</TableCell>
+							<TableCell>Lineup Season Stats</TableCell>
 							<TableCell>AVG</TableCell>
+							<TableCell>OPS</TableCell>
 							<TableCell>HR</TableCell>
-							<TableCell>SLG</TableCell>
+							<TableCell>K</TableCell>
+
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{ players.length === 0 && (
 							<TableRow>
-								<TableCell colSpan="5" style={{textAlign:'center'}}>Loading...</TableCell>
+								<TableCell colSpan="5" style={{textAlign:'center'}}>Lineup Not Available</TableCell>
 							</TableRow>
 						)}
-						{ players.map((player) =>
-							(<TableRow key={player.player_id}>
-								<TableCell><Player player={player} team={this.props.team} /></TableCell>
-								<TableCell>{player.b_total_hits} / { player.b_ab}</TableCell>
-								<TableCell>{player.b_batting_avg}</TableCell>
-								<TableCell>{player.b_home_run}</TableCell>
-								<TableCell>{player.b_slugging_avg}</TableCell>
-							</TableRow>)
+						{ lineup && lineup.map((playerId) => {
+								batter = players["ID" + playerId].person
+							  batterStats = players["ID" + playerId].seasonStats.batting
+								return (<TableRow key={playerId}>
+									<TableCell>{batter && batter.fullName}</TableCell>
+									<TableCell>{batterStats && batterStats['avg']}</TableCell>
+									<TableCell>{batterStats && batterStats['ops']}</TableCell>
+									<TableCell>{batterStats && batterStats['homeRuns']}</TableCell>
+									<TableCell>{batterStats && batterStats['strikeOuts']}</TableCell>
+
+								</TableRow>)
+							}
 						)}
 					</TableBody>
 				</Table>
 		)
+
+		/*
+		{ lineup && lineup.map((player) =>
+			(<TableRow key={player.player_id}>
+				<TableCell><Player player={player} team={this.props.team} /></TableCell>
+				<TableCell>{player.b_total_hits} / { player.b_ab}</TableCell>
+				<TableCell>{player.b_batting_avg}</TableCell>
+				<TableCell>{player.b_home_run}</TableCell>
+				<TableCell>{player.b_slugging_avg}</TableCell>
+			</TableRow>)
+		)}
+		*/
 	}
 }
 

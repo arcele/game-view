@@ -72,8 +72,12 @@ const schedule = (state = {
 			let boxscore = action.game && action.game.liveData && action.game.liveData.boxscore
 			game.awayTeam.starter = players && players["ID" + (probables && probables.away && probables.away.id)]
 			game.awayTeam.starter.stats = boxscore.teams.away.players["ID" + (probables && probables.away && probables.away.id)].seasonStats.pitching
+			game.awayTeam.lineup = boxscore.teams.away.batters
+			game.awayTeam.players = boxscore.teams.away.players
 			game.homeTeam.starter = players && players["ID" + (probables && probables.home && probables.home.id)]
 			game.homeTeam.starter.stats = boxscore.teams.home.players["ID" + (probables && probables.home && probables.home.id)].seasonStats.pitching
+			game.homeTeam.lineup = boxscore.teams.home.batters
+			game.homeTeam.players = boxscore.teams.home.players
 			game.players = players
 			return Object.assign({}, state, {
 				game
