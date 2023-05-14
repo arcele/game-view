@@ -65,13 +65,16 @@ const schedule = (state = {
 				// This creates a reference to the game, which is rad for reading,
 				game: getGame(state.scheduleDate, action.gameId)
 			})
-		case SAVE_PROBABLE_STARTERS:
+		case SAVE_PROBABLE_STARTERS: // Need a better name here, we're saving basiaclly all game data from the live call
 			// Save the probable starters to the original game element
 			// also save all of the rad player data we get from this feed
 			let players = action.game && action.game.gameData && action.game.gameData.players
 			let probables = action.game && action.game.gameData && action.game.gameData.probablePitchers
+			let boxscore = action.game && action.game.liveData && action.game.liveData.boxscore
 			game.awayTeam.starter = players && players["ID" + (probables && probables.away && probables.away.id)]
+			game.awayTeam.starter.stats = boxscore.teams.away.players["ID" + (probables && probables.away && probables.away.id)].seasonStats.pitching
 			game.homeTeam.starter = players && players["ID" + (probables && probables.home && probables.home.id)]
+			game.homeTeam.starter.stats = boxscore.teams.home.players["ID" + (probables && probables.home && probables.home.id)].seasonStats.pitching
 			game.players = players
 			return Object.assign({}, state, {
 				game

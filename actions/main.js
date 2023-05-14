@@ -6,7 +6,8 @@ import fetch from 'isomorphic-fetch'
 //apiKey is not in the project and must be created locally -- for a free key visit https://the-odds-api.com/
 import apiKey from '../config/apiKey'
 
-const SEASON = '2022'
+const SEASON = '2023'
+const API_HOST = 'https://statsapi.mlb.com/'
 
 export const savePlayer = (player) => {
   return dispatch => {
@@ -129,10 +130,15 @@ export const fetchGame = (id) => {
 		fetch(probableApi).then((res) => {
 			return res.json()
 		}).then((probableData) => {
-      const starters = probableData.gameData.probablePitchers,
-        homeTeamId = probableData.gameData.teams.home.id,
-        awayTeamId = probableData.gameData.teams.away.id
-			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, game: probableData })
+      const gameData = probableData && probableData.gameData,
+        starters = gameData && gameData.probablePitchers,
+        homeTeamId = gameData && gameData.teams.home.id,
+        awayTeamId = gameData && gameData.teams.away.id;
+  			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, game: probableData })
+
+      /*
+      No BVP API data available.  Commenting out until we can get it.
+
 			const homePitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.home.id}&game_type=%27R%27&team_id=${awayTeamId}&year=2022`
 			const awayPitcherApi = `https://lookup-service-prod.mlb.com/json/named.team_bvp_5y.bam?vs_pitcher_id=${starters.away.id}&game_type=%27R%27&team_id=${homeTeamId}&year=2022`
 			fetch(homePitcherApi).then((res) => {
@@ -151,6 +157,7 @@ export const fetchGame = (id) => {
 					})
 				})
 			})
+      */
 		})
 
 		const gameApi = `https://statsapi.mlb.com/api/v1.1/game/${id}/feed/live?language=en`
