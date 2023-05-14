@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, LOAD_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE, LOAD_ODDS_FROM_LOCAL_STORAGE, LOAD_ODDS_FROM_STATE, SAVE_STANDINGS } from '../types/main'
+import { SAVE_SCHEDULE, LOAD_GAME, SAVE_GAME_DATA, REQUEST_SCHEDULE, SAVE_PITCHER_DETAILS, SAVE_BVP_DATA, SAVE_BETTING_ODDS, SET_SCHEDULE_DATE, LOAD_ODDS_FROM_LOCAL_STORAGE, LOAD_ODDS_FROM_STATE, SAVE_STANDINGS } from '../types/main'
 import { combineReducers } from 'redux'
 import moment from 'moment'
 
@@ -65,9 +65,8 @@ const schedule = (state = {
 				// This creates a reference to the game, which is rad for reading,
 				game: getGame(state.scheduleDate, action.gameId)
 			})
-		case SAVE_PROBABLE_STARTERS: // Need a better name here, we're saving basiaclly all game data from the live call
-			// Save the probable starters to the original game element
-			// also save all of the rad player data we get from this feed
+		case SAVE_GAME_DATA:
+			// Save data from the boxscore API which includes players, probables, and player season stats
 			let players = action.game && action.game.gameData && action.game.gameData.players
 			let probables = action.game && action.game.gameData && action.game.gameData.probablePitchers
 			let boxscore = action.game && action.game.liveData && action.game.liveData.boxscore

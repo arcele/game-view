@@ -1,4 +1,4 @@
-import { SAVE_SCHEDULE, SAVE_GAME, SAVE_PROBABLE_STARTERS, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS, LOAD_ODDS_FROM_STATE, LOAD_ODDS_FROM_LOCAL_STORAGE, SAVE_BETTING_ODDS, SAVE_STANDINGS } from '../types/main'
+import { SAVE_SCHEDULE, SAVE_GAME, SAVE_GAME_DATA, REQUEST_SCHEDULE, SAVE_BVP_DATA, SAVE_PITCHER_DETAILS, LOAD_ODDS_FROM_STATE, LOAD_ODDS_FROM_LOCAL_STORAGE, SAVE_BETTING_ODDS, SAVE_STANDINGS } from '../types/main'
 import CONSTANT_TEAMS from '../constants/teams'
 import moment from 'moment'
 import _ from 'lodash'
@@ -134,7 +134,7 @@ export const fetchGame = (id) => {
         starters = gameData && gameData.probablePitchers,
         homeTeamId = gameData && gameData.teams.home.id,
         awayTeamId = gameData && gameData.teams.away.id;
-  			dispatch({ type: SAVE_PROBABLE_STARTERS, gameId: id, game: probableData })
+  			dispatch({ type: SAVE_GAME_DATA, gameId: id, game: probableData })
 
       /*
       No BVP API data available.  Commenting out until we can get it.
