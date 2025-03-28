@@ -23,6 +23,8 @@ class Player extends Component {
         gamesLog   = isActive && this.getGamesLog(),
         isLoaded   = (teamDates && player && gamesLog && gamesLog.length >= teamDates.length);
 
+    console.log(">> isLoaded:", gamesLog && gamesLog.length, ">=", teamDates && teamDates.length, isLoaded);
+
     const HtmlTooltip = withStyles(theme => ({
       tooltip: {
         backgroundColor: '#e0e0e0',
@@ -35,7 +37,7 @@ class Player extends Component {
       },
     }))(Tooltip);
 
-    return(
+    return (
       <HtmlTooltip
         interactive
         onOpen={this.loadPlayer.bind(this)}
